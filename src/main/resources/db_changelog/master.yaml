@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: roman.tumaikin
+      changes:
+        - sqlFile:
+            path: \db_changelog\change_sets\create_restaurants.sql
+  - changeSet:
+      id: 2
+      author: roman.tumaikin
+      changes:
+        - sqlFile:
+            path: \db_changelog\change_sets\create_feedbacks.sql
+  - changeSet:
+      id: 3
+      author: roman.tumaikin
+      changes:
+        - sqlFile:
+            path: \db_changelog\change_sets\test.sql
