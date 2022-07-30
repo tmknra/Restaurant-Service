@@ -1,11 +1,9 @@
 package com.example.hw_5.dao.impl;
 
-import com.example.hw_5.config.DatabaseConnectionProperties;
 import com.example.hw_5.dao.RestaurantDao;
 import com.example.hw_5.entity.Restaurant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -14,7 +12,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.hw_5.config.DatabaseConnectionProperties.*;
+import static com.example.hw_5.config.DatabaseConnectionProperties.getConnectionProps;
 import static com.example.hw_5.config.DatabaseConnectionProperties.url;
 
 @Repository
@@ -24,8 +22,8 @@ public class RestaurantDaoImpl implements RestaurantDao {
 
     private static Connection connection;
 
-    @Autowired
-    private DatabaseConnectionProperties databaseConnectionProperties;
+    // @Autowired
+    // private DatabaseConnectionProperties databaseConnectionProperties;
 
     @PostConstruct
     public void initialize() {
@@ -46,21 +44,21 @@ public class RestaurantDaoImpl implements RestaurantDao {
     }
 
     @Override
-    public List<Restaurant> getAll() {
-        return getAllRestaurants();
+    public List<Restaurant> getAllRestaurants() {
+        return getAllRestaurantsFromDB();
     }
 
     @Override
-    public String getDescription(String name) {
-        return getDescriptionByName(name);
+    public String getDescriptionByName(String name) {
+        return getDescriptionByRestaurantName(name);
     }
 
     @Override
-    public void addRestaurant(Restaurant restaurant) {
-        String query = "INSERT INTO restaurants (name, description)" +
-                "VALUES('" + restaurant.getName() + "', '" + restaurant.getDescription() +
-                "')";
+    public void addNewRestaurant(Restaurant restaurant) {
+        String query = "INSERT INTO restaurants (name, description) VALUES(?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, restaurant.getName());
+            preparedStatement.setString(2, restaurant.getDescription());
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,16 +66,18 @@ public class RestaurantDaoImpl implements RestaurantDao {
     }
 
     @Override
-    public void changeRestaurantDescription(String restaurantName, String newDescription) {
-        String query = "UPDATE restaurants SET description = '" + newDescription + "' WHERE name = '" + restaurantName + "'";
+    public void changeDescriptionByName(String restaurantName, String newDescription) {
+        String query = "UPDATE restaurants SET description = ? WHERE name = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, newDescription);
+            preparedStatement.setString(2, restaurantName);
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static List<Restaurant> getAllRestaurants() {
+    private static List<Restaurant> getAllRestaurantsFromDB() {
         String getQuery = "SELECT * FROM restaurants";
         List<Restaurant> restaurants = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(getQuery)) {
@@ -95,10 +95,11 @@ public class RestaurantDaoImpl implements RestaurantDao {
         return restaurants;
     }
 
-    private static String getDescriptionByName(String restName) {
-        String getQuery = "SELECT description FROM restaurants WHERE name = '" + restName + "'";
+    private static String getDescriptionByRestaurantName(String restName) {
+        String getQuery = "SELECT description FROM restaurants WHERE name = ?";
         String result = "";
         try (PreparedStatement preparedStatement = connection.prepareStatement(getQuery)) {
+            preparedStatement.setString(1, restName);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next())
                 result = resultSet.getString(1);

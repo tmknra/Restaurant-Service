@@ -6,8 +6,9 @@ import java.util.List;
 
 public interface FeedbackDao {
     List<Feedback> getAllByRestaurantID(Integer id);
-    Double getRating(Integer restaurantID);
+    Double getAverageRatingByRestaurantID(Integer restaurantID);
+    String getFeedbackTextByID(Integer id);
 
-    void addFeedback(Feedback feedback);
+    void addNewFeedback(Feedback feedback);
     void changeFeedbackByID(Integer feedbackID, String newFeedback, Integer newRating);
 }

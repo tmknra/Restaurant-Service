@@ -1,4 +1,4 @@
-drop table if exists restaurants;
+-- drop table if exists restaurants;
 create table if not exists restaurants
 (
     id          serial primary key,

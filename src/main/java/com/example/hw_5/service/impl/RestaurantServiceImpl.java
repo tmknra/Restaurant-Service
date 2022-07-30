@@ -15,22 +15,22 @@ public class RestaurantServiceImpl implements RestaurantService {
     private RestaurantDao restaurantDao;
 
     @Override
-    public List<Restaurant> getAll() {
-        return restaurantDao.getAll();
+    public List<Restaurant> getAllRestaurants() {
+        return restaurantDao.getAllRestaurants();
     }
 
     @Override
-    public String getDescription(String restName) {
-        return restaurantDao.getDescription(restName);
+    public String getDescriptionByName(String restName) {
+        return restaurantDao.getDescriptionByName(restName);
     }
 
     @Override
-    public void addRestaurant(Restaurant restaurant) {
-        restaurantDao.addRestaurant(restaurant);
+    public void addNewRestaurant(Restaurant restaurant) {
+        restaurantDao.addNewRestaurant(restaurant);
     }
 
     @Override
-    public void changeRestaurantDescription(String restaurantName, String newDescription) {
-        restaurantDao.changeRestaurantDescription(restaurantName, newDescription);
+    public void changeDescriptionByName(String restaurantName, String newDescription) {
+        restaurantDao.changeDescriptionByName(restaurantName, newDescription);
     }
 }

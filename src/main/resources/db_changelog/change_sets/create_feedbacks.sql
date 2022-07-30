@@ -1,4 +1,4 @@
-drop table if exists feedbacks;
+-- drop table if exists feedbacks;
 create table if not exists feedbacks
 (
     id            serial primary key,

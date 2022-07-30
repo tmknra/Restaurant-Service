@@ -20,13 +20,18 @@ public class FeedbackController {
     }
 
     @GetMapping("/get_rating/{id}")
-    public Double getRating(@PathVariable Integer id){
-       return feedbackService.getRating(id);
+    public Double getAverageRatingByRestaurantID(@PathVariable Integer id){
+       return feedbackService.getAverageRatingByRestaurantID(id);
+    }
+
+    @GetMapping("/{id}")
+    public String getFeedbackTextByID(@PathVariable Integer id){
+        return feedbackService.getFeedbackTextByID(id);
     }
 
     @PutMapping("/new")
     public void addFeedbackByRestaurantID(@RequestBody Feedback feedback){
-        feedbackService.addFeedback(feedback);
+        feedbackService.addNewFeedback(feedback);
     }
     @PutMapping("/change")
     public void changeFeedbackByID(@RequestBody Feedback feedback){

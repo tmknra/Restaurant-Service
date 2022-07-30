@@ -16,21 +16,21 @@ public class RestaurantController {
 
     @GetMapping("/all")
     public List<Restaurant> getAll(){
-        return restaurantService.getAll();
+        return restaurantService.getAllRestaurants();
     }
 
     @GetMapping("/{name}")
     public String getDescription(@PathVariable String name){
-        return restaurantService.getDescription(name);
+        return restaurantService.getDescriptionByName(name);
     }
 
     @PutMapping("/new")
     public void addNewRestaurant(@RequestBody Restaurant restaurant){
-        restaurantService.addRestaurant(restaurant);
+        restaurantService.addNewRestaurant(restaurant);
     }
 
     @PutMapping("/change_description")
     public void changeDescription(@RequestBody Restaurant restaurant){
-        restaurantService.changeRestaurantDescription(restaurant.getName(), restaurant.getDescription());
+        restaurantService.changeDescriptionByName(restaurant.getName(), restaurant.getDescription());
     }
 }

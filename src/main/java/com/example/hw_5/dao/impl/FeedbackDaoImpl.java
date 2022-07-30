@@ -51,12 +51,17 @@ public class FeedbackDaoImpl implements FeedbackDao {
     }
 
     @Override
-    public Double getRating(Integer restaurantID) {
+    public Double getAverageRatingByRestaurantID(Integer restaurantID) {
         return calculateRestaurantRating(restaurantID);
     }
 
     @Override
-    public void addFeedback(Feedback feedback) {
+    public String getFeedbackTextByID(Integer id) {
+        return getFeedbackText(id);
+    }
+
+    @Override
+    public void addNewFeedback(Feedback feedback) {
         addNewInstance(feedback);
     }
 
@@ -67,8 +72,9 @@ public class FeedbackDaoImpl implements FeedbackDao {
 
     private List<Feedback> getRestaurantFeedbacks(Integer id) {
         List<Feedback> feedbacks = new ArrayList<>();
-        String query = "SELECT * FROM feedbacks WHERE restaurant_id = " + id;
+        String query = "SELECT * FROM feedbacks WHERE restaurant_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Feedback feedback = new Feedback(
@@ -87,8 +93,11 @@ public class FeedbackDaoImpl implements FeedbackDao {
 
     private void addNewInstance(Feedback feedback) {
         String query = "INSERT INTO feedbacks (restaurant_id, feedback, rating)" +
-                "VALUES(" + feedback.getRestaurantID() + ", '" + feedback.getFeedback() + "', " + feedback.getRating() + ")";
+                        "VALUES(?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setObject(1, feedback.getRestaurantID());
+            preparedStatement.setObject(2, feedback.getFeedback());
+            preparedStatement.setObject(3, feedback.getRating());
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,8 +105,11 @@ public class FeedbackDaoImpl implements FeedbackDao {
     }
 
     private void changeFeedback(Integer feedbackID, String newFeedback, Integer newRating) {
-        String query = "UPDATE feedbacks SET feedback = '" + newFeedback + "', rating = " + newRating + " WHERE id = " + feedbackID;
+        String query = "UPDATE feedbacks SET feedback = ?, rating = ? WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setObject(1, newFeedback);
+            preparedStatement.setObject(2, newRating);
+            preparedStatement.setObject(3, feedbackID);
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,8 +118,9 @@ public class FeedbackDaoImpl implements FeedbackDao {
 
     private Double calculateRestaurantRating(Integer restaurantID) {
         List<Integer> marks = new ArrayList<>();
-        String query = "SELECT rating FROM feedbacks WHERE restaurant_id = " + restaurantID;
+        String query = "SELECT rating FROM feedbacks WHERE restaurant_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setObject(1, restaurantID);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next())
                 marks.add(resultSet.getInt(1));
@@ -115,5 +128,21 @@ public class FeedbackDaoImpl implements FeedbackDao {
             e.printStackTrace();
         }
         return marks.stream().mapToInt(value -> value).average().getAsDouble();
+    }
+
+    private String getFeedbackText(Integer id) {
+        String query = "SELECT feedback FROM feedbacks WHERE id = ?";
+        String result = "";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setObject(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                result = resultSet.getString(1);
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "Wrong ID!";
     }
 }

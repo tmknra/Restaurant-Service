@@ -20,13 +20,18 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public Double getRating(Integer restaurantID) {
-        return feedbackDao.getRating(restaurantID);
+    public Double getAverageRatingByRestaurantID(Integer restaurantID) {
+        return feedbackDao.getAverageRatingByRestaurantID(restaurantID);
     }
 
     @Override
-    public void addFeedback(Feedback feedback) {
-        feedbackDao.addFeedback(feedback);
+    public String getFeedbackTextByID(Integer id) {
+        return feedbackDao.getFeedbackTextByID(id);
+    }
+
+    @Override
+    public void addNewFeedback(Feedback feedback) {
+        feedbackDao.addNewFeedback(feedback);
     }
 
     @Override
