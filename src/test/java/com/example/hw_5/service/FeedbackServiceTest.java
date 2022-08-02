@@ -3,13 +3,18 @@ package com.example.hw_5.service;
 import com.example.hw_5.Hw5ApplicationTests;
 import com.example.hw_5.entity.Feedback;
 import com.example.hw_5.entity.Restaurant;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class FeedbackServiceTest extends Hw5ApplicationTests {
 
     @Autowired
@@ -17,58 +22,57 @@ public class FeedbackServiceTest extends Hw5ApplicationTests {
     @Autowired
     private RestaurantService restaurantService;
 
-    private final Restaurant testRestaurant;
-    private final Feedback testFeedback;
-    private final Integer testRestaurantID = 1;
-    private final String testText = "testFeedback";
-    private final Integer testRating = 1;
+    private Restaurant testRestaurant;
+    private Feedback testFeedback;
+    private Integer testRestaurantId;
+    private Integer testFeedbackId;
 
-    {
-        testFeedback = new Feedback(testRestaurantID, testText, testRating);
+    @BeforeAll
+    void setUp() {
         testRestaurant = new Restaurant("test", "test");
+        restaurantService.addNewRestaurant(testRestaurant);
+        List<Restaurant> allRestaurants = restaurantService.getAllRestaurants();
+        testRestaurantId = allRestaurants.get(allRestaurants.size() - 1).getId();
+
+        testFeedback = new Feedback(testRestaurantId, "testFeedback", 1);
+        feedbackService.addNewFeedback(testFeedback);
+        List<Feedback> allByRestaurantID = feedbackService.getAllByRestaurantID(testRestaurantId);
+        testFeedbackId = allByRestaurantID.get(allByRestaurantID.size() - 1).getId();
     }
 
     @Test
     void getAllByRestaurantID() {
-        List<Feedback> allByRestaurantID = feedbackService.getAllByRestaurantID(testRestaurantID);
+        List<Feedback> allByRestaurantID = feedbackService.getAllByRestaurantID(testRestaurantId);
         Feedback feedback = allByRestaurantID.get(0);
-        assertEquals(testRestaurantID, feedback.getRestaurantID());
+        assertEquals(testRestaurantId, feedback.getRestaurantID());
     }
 
     @Test
     void getAverageRatingByRestaurantID() {
-        restaurantService.addNewRestaurant(testRestaurant);
-
-        List<Restaurant> allRestaurants = restaurantService.getAllRestaurants();
-        Restaurant restaurant = allRestaurants.get(allRestaurants.size() - 1);
-        Integer testID = restaurant.getId();
-        Feedback ratingTest = new Feedback(testID, "test", 2);
-
-        feedbackService.addNewFeedback(ratingTest);
-        Double averageRating = feedbackService.getAverageRatingByRestaurantID(testID);
-        assertEquals(ratingTest.getRating().doubleValue(), averageRating);
-    }
-    
-    @Test
-    void addNewFeedback() {
-        feedbackService.addNewFeedback(testFeedback);
-        List<Feedback> allByRestaurantID = feedbackService.getAllByRestaurantID(1);
-        Feedback feedbackFromDB = allByRestaurantID.get(allByRestaurantID.size() - 1);
-        assertEquals(testFeedback.getFeedback(), feedbackFromDB.getFeedback());
+        Double averageRating = feedbackService.getAverageRatingByRestaurantID(testRestaurantId);
+        assertEquals(testFeedback.getRating().doubleValue(), averageRating);
     }
 
     @Test
-    void getFeedbackTextByID(){
-        feedbackService.addNewFeedback(testFeedback);
-        List<Feedback> allByRestaurantID = feedbackService.getAllByRestaurantID(testFeedback.getRestaurantID());
-        Feedback feedback = allByRestaurantID.get(allByRestaurantID.size()-1);
-        assertEquals(testFeedback.getFeedback(), feedback.getFeedback());
+    void getFeedbackTextByID() {
+        String feedbackTextByID = feedbackService.getFeedbackTextByID(testFeedbackId);
+        assertEquals(testFeedback.getFeedback(), feedbackTextByID);
     }
 
     @Test
     void changeFeedbackByID() {
-        feedbackService.changeFeedbackByID(testRestaurantID, testText, testRating);
-        String feedbackByID = feedbackService.getFeedbackTextByID(testRestaurantID);
-        assertEquals(testFeedback.getFeedback(), feedbackByID);
+        String testFeed = "qqq";
+        Integer testRating = 3;
+        feedbackService.changeFeedbackByID(testFeedbackId, testFeed, testRating);
+        List<Feedback> all = feedbackService.getAllByRestaurantID(testRestaurantId);
+        Feedback feedback = all.get(0);
+        assertEquals(testFeed, feedback.getFeedback());
+        assertEquals(testRating, feedback.getRating());
+    }
+
+    @AfterAll
+    void clear(){
+        feedbackService.deleteFeedbackByRestaurantId(testRestaurantId);
+        restaurantService.deleteRestaurantByName(testRestaurant.getName());
     }
 }

@@ -70,6 +70,11 @@ public class FeedbackDaoImpl implements FeedbackDao {
         changeFeedback(feedbackID, newFeedback, newRating);
     }
 
+    @Override
+    public void deleteFeedbackByRestaurantId(Integer id) {
+        deleteFeedback(id);
+    }
+
     private List<Feedback> getRestaurantFeedbacks(Integer id) {
         List<Feedback> feedbacks = new ArrayList<>();
         String query = "SELECT * FROM feedbacks WHERE restaurant_id = ?";
@@ -144,5 +149,15 @@ public class FeedbackDaoImpl implements FeedbackDao {
             e.printStackTrace();
         }
         return "Wrong ID!";
+    }
+
+    private void deleteFeedback(Integer id) {
+        String query = "DELETE FROM feedbacks WHERE restaurant_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setObject(1, id);
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -36,7 +36,8 @@ public class RestaurantServiceTest extends Hw5ApplicationTests {
         Restaurant restaurant = new Restaurant("testName", "testDescription");
         restaurantService.addNewRestaurant(restaurant);
         List<Restaurant> all = restaurantService.getAllRestaurants();
-        assertEquals(all.get(0).getId(), 1);
+        String targetName = all.get(all.size() - 1).getName();
+        assertEquals(targetName, restaurant.getName());
     }
 
     @Test
