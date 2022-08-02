@@ -38,4 +38,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     public void changeFeedbackByID(Integer feedbackID, String newFeedback, Integer newRating) {
         feedbackDao.changeFeedbackByID(feedbackID, newFeedback, newRating);
     }
+
+    @Override
+    public void deleteFeedbackByRestaurantId(Integer id) {
+        feedbackDao.deleteFeedbackByRestaurantId(id);
+    }
 }

@@ -2,6 +2,8 @@ package com.example.hw_5.dao.impl;
 
 import com.example.hw_5.dao.RestaurantDao;
 import com.example.hw_5.entity.Restaurant;
+import com.example.hw_5.util.Util;
+import com.google.i18n.phonenumbers.NumberParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -21,9 +23,6 @@ public class RestaurantDaoImpl implements RestaurantDao {
     private static final Logger log = LoggerFactory.getLogger(RestaurantDaoImpl.class);
 
     private static Connection connection;
-
-    // @Autowired
-    // private DatabaseConnectionProperties databaseConnectionProperties;
 
     @PostConstruct
     public void initialize() {
@@ -77,6 +76,22 @@ public class RestaurantDaoImpl implements RestaurantDao {
         }
     }
 
+    @Override
+    public void setEmailById(Integer id, String email) {
+        setColumnById(id, "email_address", Util.validateEmailAddress(email));
+    }
+
+
+    @Override
+    public void setPhoneNumberById(Integer id, String number) throws NumberParseException {
+        setColumnById(id, "phone_number", Util.reformatRuTelephone(number));
+    }
+
+    @Override
+    public void deleteRestaurantByName(String name) {
+        deleteRestaurant(name);
+    }
+
     private static List<Restaurant> getAllRestaurantsFromDB() {
         String getQuery = "SELECT * FROM restaurants";
         List<Restaurant> restaurants = new ArrayList<>();
@@ -108,5 +123,28 @@ public class RestaurantDaoImpl implements RestaurantDao {
             e.printStackTrace();
         }
         return "Wrong name!";
+    }
+
+    private void deleteRestaurant(String name) {
+        String query = "DELETE FROM restaurants WHERE name = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void setColumnById(Integer id, String columnName, Object value) {
+        String query = "UPDATE restaurants SET ? = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setObject(1, columnName);
+            preparedStatement.setObject(2, value);
+            preparedStatement.setObject(3, id);
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

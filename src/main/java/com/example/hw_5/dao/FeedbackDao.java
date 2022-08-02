@@ -11,4 +11,6 @@ public interface FeedbackDao {
 
     void addNewFeedback(Feedback feedback);
     void changeFeedbackByID(Integer feedbackID, String newFeedback, Integer newRating);
+
+    void deleteFeedbackByRestaurantId(Integer id);
 }

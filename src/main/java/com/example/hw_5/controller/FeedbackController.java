@@ -33,8 +33,14 @@ public class FeedbackController {
     public void addFeedbackByRestaurantID(@RequestBody Feedback feedback){
         feedbackService.addNewFeedback(feedback);
     }
+
     @PutMapping("/change")
     public void changeFeedbackByID(@RequestBody Feedback feedback){
         feedbackService.changeFeedbackByID(feedback.getId(), feedback.getFeedback(), feedback.getRating());
+    }
+
+    @PutMapping("/delete")
+    public void deleteFeedbackByRestaurantId(@RequestBody Integer id){
+        feedbackService.deleteFeedbackByRestaurantId(id);
     }
 }

@@ -3,6 +3,7 @@ package com.example.hw_5.service.impl;
 import com.example.hw_5.dao.RestaurantDao;
 import com.example.hw_5.entity.Restaurant;
 import com.example.hw_5.service.RestaurantService;
+import com.google.i18n.phonenumbers.NumberParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,5 +33,20 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public void changeDescriptionByName(String restaurantName, String newDescription) {
         restaurantDao.changeDescriptionByName(restaurantName, newDescription);
+    }
+
+    @Override
+    public void setEmailById(Integer id, String email) {
+        restaurantDao.setEmailById(id, email);
+    }
+
+    @Override
+    public void setPhoneNumberById(Integer id, String number) throws NumberParseException {
+        restaurantDao.setPhoneNumberById(id, number);
+    }
+
+    @Override
+    public void deleteRestaurantByName(String name) {
+        restaurantDao.deleteRestaurantByName(name);
     }
 }
