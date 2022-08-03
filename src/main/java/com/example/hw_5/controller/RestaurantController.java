@@ -2,6 +2,7 @@ package com.example.hw_5.controller;
 
 import com.example.hw_5.entity.Restaurant;
 import com.example.hw_5.service.RestaurantService;
+import com.google.i18n.phonenumbers.NumberParseException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -27,6 +28,21 @@ public class RestaurantController {
     @PutMapping("/new")
     public void addNewRestaurant(@RequestBody Restaurant restaurant){
         restaurantService.addNewRestaurant(restaurant);
+    }
+
+    @PutMapping("/delete")
+    public void deleteRestaurantByName(@RequestBody String name) {
+        restaurantService.deleteRestaurantByName(name);
+    }
+
+    @PutMapping("/set_email/{id}")
+    public void setEmail(@PathVariable Long id,@RequestBody String email_address){
+        restaurantService.setEmailById(id, email_address);
+    }
+
+    @PutMapping("/set_phone/{id}")
+    public void setPhoneNumber(@PathVariable Long id,@RequestBody String phone_number) throws NumberParseException {
+        restaurantService.setPhoneNumberById(id, phone_number);
     }
 
     @PutMapping("/change_description")

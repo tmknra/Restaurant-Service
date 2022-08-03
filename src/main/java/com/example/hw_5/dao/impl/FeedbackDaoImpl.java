@@ -46,17 +46,17 @@ public class FeedbackDaoImpl implements FeedbackDao {
     }
 
     @Override
-    public List<Feedback> getAllByRestaurantID(Integer id) {
+    public List<Feedback> getAllByRestaurantID(Long id) {
         return getRestaurantFeedbacks(id);
     }
 
     @Override
-    public Double getAverageRatingByRestaurantID(Integer restaurantID) {
+    public Double getAverageRatingByRestaurantID(Long restaurantID) {
         return calculateRestaurantRating(restaurantID);
     }
 
     @Override
-    public String getFeedbackTextByID(Integer id) {
+    public String getFeedbackTextByID(Long id) {
         return getFeedbackText(id);
     }
 
@@ -66,16 +66,16 @@ public class FeedbackDaoImpl implements FeedbackDao {
     }
 
     @Override
-    public void changeFeedbackByID(Integer feedbackID, String newFeedback, Integer newRating) {
+    public void changeFeedbackByID(Long feedbackID, String newFeedback, Integer newRating) {
         changeFeedback(feedbackID, newFeedback, newRating);
     }
 
     @Override
-    public void deleteFeedbackByRestaurantId(Integer id) {
+    public void deleteFeedbackByRestaurantId(Long id) {
         deleteFeedback(id);
     }
 
-    private List<Feedback> getRestaurantFeedbacks(Integer id) {
+    private List<Feedback> getRestaurantFeedbacks(Long id) {
         List<Feedback> feedbacks = new ArrayList<>();
         String query = "SELECT * FROM feedbacks WHERE restaurant_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -83,8 +83,8 @@ public class FeedbackDaoImpl implements FeedbackDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Feedback feedback = new Feedback(
-                        resultSet.getInt(1),
-                        resultSet.getInt(2),
+                        resultSet.getLong(1),
+                        resultSet.getLong(2),
                         resultSet.getString(3),
                         resultSet.getInt(4)
                 );
@@ -109,7 +109,7 @@ public class FeedbackDaoImpl implements FeedbackDao {
         }
     }
 
-    private void changeFeedback(Integer feedbackID, String newFeedback, Integer newRating) {
+    private void changeFeedback(Long feedbackID, String newFeedback, Integer newRating) {
         String query = "UPDATE feedbacks SET feedback = ?, rating = ? WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setObject(1, newFeedback);
@@ -121,7 +121,7 @@ public class FeedbackDaoImpl implements FeedbackDao {
         }
     }
 
-    private Double calculateRestaurantRating(Integer restaurantID) {
+    private Double calculateRestaurantRating(Long restaurantID) {
         List<Integer> marks = new ArrayList<>();
         String query = "SELECT rating FROM feedbacks WHERE restaurant_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -135,7 +135,7 @@ public class FeedbackDaoImpl implements FeedbackDao {
         return marks.stream().mapToInt(value -> value).average().getAsDouble();
     }
 
-    private String getFeedbackText(Integer id) {
+    private String getFeedbackText(Long id) {
         String query = "SELECT feedback FROM feedbacks WHERE id = ?";
         String result = "";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -151,7 +151,7 @@ public class FeedbackDaoImpl implements FeedbackDao {
         return "Wrong ID!";
     }
 
-    private void deleteFeedback(Integer id) {
+    private void deleteFeedback(Long id) {
         String query = "DELETE FROM feedbacks WHERE restaurant_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setObject(1, id);

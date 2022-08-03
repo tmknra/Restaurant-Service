@@ -15,17 +15,17 @@ public class FeedbackServiceImpl implements FeedbackService {
     private FeedbackDao feedbackDao;
 
     @Override
-    public List<Feedback> getAllByRestaurantID(Integer id) {
+    public List<Feedback> getAllByRestaurantID(Long id) {
         return feedbackDao.getAllByRestaurantID(id);
     }
 
     @Override
-    public Double getAverageRatingByRestaurantID(Integer restaurantID) {
+    public Double getAverageRatingByRestaurantID(Long restaurantID) {
         return feedbackDao.getAverageRatingByRestaurantID(restaurantID);
     }
 
     @Override
-    public String getFeedbackTextByID(Integer id) {
+    public String getFeedbackTextByID(Long id) {
         return feedbackDao.getFeedbackTextByID(id);
     }
 
@@ -35,12 +35,12 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public void changeFeedbackByID(Integer feedbackID, String newFeedback, Integer newRating) {
+    public void changeFeedbackByID(Long feedbackID, String newFeedback, Integer newRating) {
         feedbackDao.changeFeedbackByID(feedbackID, newFeedback, newRating);
     }
 
     @Override
-    public void deleteFeedbackByRestaurantId(Integer id) {
+    public void deleteFeedbackByRestaurantId(Long id) {
         feedbackDao.deleteFeedbackByRestaurantId(id);
     }
 }

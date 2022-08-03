@@ -15,17 +15,17 @@ public class FeedbackController {
     private FeedbackService feedbackService;
 
     @GetMapping("/{restID}")
-    public List<Feedback> getFeedbacks(@PathVariable Integer restID){
+    public List<Feedback> getFeedbacks(@PathVariable Long restID){
         return feedbackService.getAllByRestaurantID(restID);
     }
 
     @GetMapping("/get_rating/{id}")
-    public Double getAverageRatingByRestaurantID(@PathVariable Integer id){
+    public Double getAverageRatingByRestaurantID(@PathVariable Long id){
        return feedbackService.getAverageRatingByRestaurantID(id);
     }
 
     @GetMapping("/{id}")
-    public String getFeedbackTextByID(@PathVariable Integer id){
+    public String getFeedbackTextByID(@PathVariable Long id){
         return feedbackService.getFeedbackTextByID(id);
     }
 
@@ -40,7 +40,7 @@ public class FeedbackController {
     }
 
     @PutMapping("/delete")
-    public void deleteFeedbackByRestaurantId(@RequestBody Integer id){
+    public void deleteFeedbackByRestaurantId(@RequestBody Long id){
         feedbackService.deleteFeedbackByRestaurantId(id);
     }
 }

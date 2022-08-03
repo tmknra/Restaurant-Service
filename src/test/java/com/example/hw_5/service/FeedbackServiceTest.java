@@ -24,8 +24,8 @@ public class FeedbackServiceTest extends Hw5ApplicationTests {
 
     private Restaurant testRestaurant;
     private Feedback testFeedback;
-    private Integer testRestaurantId;
-    private Integer testFeedbackId;
+    private Long testRestaurantId;
+    private Long testFeedbackId;
 
     @BeforeAll
     void setUp() {

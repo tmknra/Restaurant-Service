@@ -36,12 +36,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public void setEmailById(Integer id, String email) {
+    public void setEmailById(Long id, String email) {
         restaurantDao.setEmailById(id, email);
     }
 
     @Override
-    public void setPhoneNumberById(Integer id, String number) throws NumberParseException {
+    public void setPhoneNumberById(Long id, String number) throws NumberParseException {
         restaurantDao.setPhoneNumberById(id, number);
     }
 

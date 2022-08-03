@@ -3,36 +3,36 @@ package com.example.hw_5.entity;
 import java.util.Objects;
 
 public class Feedback {
-   private Integer id;
-   private Integer restaurantID;
+   private Long id;
+   private Long restaurantID;
    private String feedback;
    private Integer rating;
 
     public Feedback() {
     }
 
-    public Feedback(Integer restaurantID, String feedback, Integer rating) {
+    public Feedback(Long restaurantID, String feedback, Integer rating) {
         this.restaurantID = restaurantID;
         this.feedback = feedback;
         this.rating = rating;
     }
 
-    public Feedback(Integer id, Integer restaurantID, String feedback, Integer rating) {
+    public Feedback(Long id, Long restaurantID, String feedback, Integer rating) {
         this.id = id;
         this.restaurantID = restaurantID;
         this.feedback = feedback;
         this.rating = rating;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public Integer getRestaurantID() {
+    public Long getRestaurantID() {
         return restaurantID;
     }
 
-    public void setRestaurantID(Integer restaurantID) {
+    public void setRestaurantID(Long restaurantID) {
         this.restaurantID = restaurantID;
     }
 

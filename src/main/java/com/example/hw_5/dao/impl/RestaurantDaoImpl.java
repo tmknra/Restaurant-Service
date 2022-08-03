@@ -54,10 +54,12 @@ public class RestaurantDaoImpl implements RestaurantDao {
 
     @Override
     public void addNewRestaurant(Restaurant restaurant) {
-        String query = "INSERT INTO restaurants (name, description) VALUES(?, ?)";
+        String query = "INSERT INTO restaurants (name, description, phone_number, email_address) VALUES(?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, restaurant.getName());
-            preparedStatement.setString(2, restaurant.getDescription());
+            preparedStatement.setObject(1, restaurant.getName());
+            preparedStatement.setObject(2, restaurant.getDescription());
+            preparedStatement.setObject(3, restaurant.getPhone_number());
+            preparedStatement.setObject(4, restaurant.getEmail_address());
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,13 +79,13 @@ public class RestaurantDaoImpl implements RestaurantDao {
     }
 
     @Override
-    public void setEmailById(Integer id, String email) {
+    public void setEmailById(Long id, String email) {
         setColumnById(id, "email_address", Util.validateEmailAddress(email));
     }
 
 
     @Override
-    public void setPhoneNumberById(Integer id, String number) throws NumberParseException {
+    public void setPhoneNumberById(Long id, String number) throws NumberParseException {
         setColumnById(id, "phone_number", Util.reformatRuTelephone(number));
     }
 
@@ -99,7 +101,7 @@ public class RestaurantDaoImpl implements RestaurantDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Restaurant restaurant = new Restaurant(
-                        resultSet.getInt(1),
+                        resultSet.getLong(1),
                         resultSet.getString(2),
                         resultSet.getString(3));
                 restaurants.add(restaurant);
@@ -136,12 +138,11 @@ public class RestaurantDaoImpl implements RestaurantDao {
     }
 
 
-    private void setColumnById(Integer id, String columnName, Object value) {
-        String query = "UPDATE restaurants SET ? = ? WHERE id = ?";
+    private void setColumnById(Long id, String columnName, Object value) {
+        String query = "UPDATE restaurants SET " + columnName + " = ? WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setObject(1, columnName);
-            preparedStatement.setObject(2, value);
-            preparedStatement.setObject(3, id);
+            preparedStatement.setObject(1, value);
+            preparedStatement.setObject(2, id);
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

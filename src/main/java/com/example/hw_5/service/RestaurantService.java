@@ -10,9 +10,10 @@ public interface RestaurantService {
     String getDescriptionByName(String restName);
 
     void addNewRestaurant(Restaurant restaurant);
+
     void changeDescriptionByName(String restaurantName, String newDescription);
-    void setEmailById(Integer id, String email);
-    void setPhoneNumberById(Integer id, String number) throws NumberParseException;
+    void setEmailById(Long id, String email);
+    void setPhoneNumberById(Long id, String number) throws NumberParseException;
 
     void deleteRestaurantByName(String name);
 }
