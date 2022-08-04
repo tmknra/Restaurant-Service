@@ -2,6 +2,7 @@ package com.example.hw_5.service.impl;
 
 import com.example.hw_5.dao.RestaurantDao;
 import com.example.hw_5.entity.Restaurant;
+import com.example.hw_5.exception.FoundationDateIsExpiredException;
 import com.example.hw_5.service.RestaurantService;
 import com.google.i18n.phonenumbers.NumberParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public void addNewRestaurant(Restaurant restaurant) {
+    public String getFoundationDateById(Long id) {
+        return restaurantDao.getFoundationDateById(id);
+    }
+
+    @Override
+    public void addNewRestaurant (Restaurant restaurant) throws FoundationDateIsExpiredException {
         restaurantDao.addNewRestaurant(restaurant);
     }
 
@@ -43,6 +49,11 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public void setPhoneNumberById(Long id, String number) throws NumberParseException {
         restaurantDao.setPhoneNumberById(id, number);
+    }
+
+    @Override
+    public void setFoundationDateById(Long id, String date) throws FoundationDateIsExpiredException {
+        restaurantDao.setFoundationDateById(id, date);
     }
 
     @Override

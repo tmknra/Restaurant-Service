@@ -3,6 +3,7 @@ package com.example.hw_5.service;
 import com.example.hw_5.Hw5ApplicationTests;
 import com.example.hw_5.entity.Feedback;
 import com.example.hw_5.entity.Restaurant;
+import com.example.hw_5.exception.FoundationDateIsExpiredException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ public class FeedbackServiceTest extends Hw5ApplicationTests {
     private Long testFeedbackId;
 
     @BeforeAll
-    void setUp() {
+    void setUp() throws FoundationDateIsExpiredException {
         testRestaurant = new Restaurant("test", "test");
         restaurantService.addNewRestaurant(testRestaurant);
         List<Restaurant> allRestaurants = restaurantService.getAllRestaurants();

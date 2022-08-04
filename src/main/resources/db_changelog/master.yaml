@@ -29,10 +29,10 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: \db_changelog\change_sets\add_email_address_to_restaurant.sql
-#  - changeSet:
-#      id: 6
-#      author: roman.tumaikin
-#      changes:
-#        - sqlFile:
-#            path: \db_changelog\change_sets\add_foundation_date.sql
+  - changeSet:
+      id: 6
+      author: roman.tumaikin
+      changes:
+        - sqlFile:
+            path: \db_changelog\change_sets\add_foundation_date.sql
 

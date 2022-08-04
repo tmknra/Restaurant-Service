@@ -4,6 +4,8 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
 public class Util {
@@ -23,7 +25,15 @@ public class Util {
     public static String validateEmailAddress(String email) {
         boolean matches = Pattern.compile(emailRegExp).matcher(email).matches();
         if (!matches)
-            throw new IllegalArgumentException("email is not correct, try again");
+            throw new IllegalArgumentException("incorrect email format");
         return email;
+    }
+
+    public static LocalDate validateFoundationDate(String date) {
+        String datePattern = "dd/MM/yyyy";
+        LocalDate parse = LocalDate.parse(date, DateTimeFormatter.ofPattern(datePattern));
+        if (parse.equals(LocalDate.now()))
+            throw new IllegalArgumentException("Foundation date cannot be today");
+        return parse;
     }
 }

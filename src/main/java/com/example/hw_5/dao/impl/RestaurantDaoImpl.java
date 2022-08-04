@@ -2,15 +2,20 @@ package com.example.hw_5.dao.impl;
 
 import com.example.hw_5.dao.RestaurantDao;
 import com.example.hw_5.entity.Restaurant;
+import com.example.hw_5.exception.FoundationDateIsExpiredException;
 import com.example.hw_5.util.Util;
 import com.google.i18n.phonenumbers.NumberParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,13 +58,23 @@ public class RestaurantDaoImpl implements RestaurantDao {
     }
 
     @Override
-    public void addNewRestaurant(Restaurant restaurant) {
-        String query = "INSERT INTO restaurants (name, description, phone_number, email_address) VALUES(?, ?, ?, ?)";
+    public String getFoundationDateById(Long id) {
+        return getFoundationDate(id);
+    }
+
+    @Override
+    public void addNewRestaurant(Restaurant restaurant) throws FoundationDateIsExpiredException {
+        LocalDate parse = LocalDate.parse(restaurant.getFoundation_date(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        if (restaurant.getFoundation_date() == null || LocalDate.now(ZoneId.systemDefault()).isBefore(parse)) {
+            throw new FoundationDateIsExpiredException(restaurant.getName(), restaurant.getFoundation_date());
+        }
+        String query = "INSERT INTO restaurants (name, description, phone_number, email_address, foundation_date) VALUES(?, ?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setObject(1, restaurant.getName());
             preparedStatement.setObject(2, restaurant.getDescription());
             preparedStatement.setObject(3, restaurant.getPhone_number());
             preparedStatement.setObject(4, restaurant.getEmail_address());
+            preparedStatement.setObject(5, LocalDate.parse(restaurant.getFoundation_date(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,6 +105,12 @@ public class RestaurantDaoImpl implements RestaurantDao {
     }
 
     @Override
+    public void setFoundationDateById(Long id, String date) {
+        LocalDate parse = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        setColumnById(id, "foundation_date", parse);
+    }
+
+    @Override
     public void deleteRestaurantByName(String name) {
         deleteRestaurant(name);
     }
@@ -103,7 +124,11 @@ public class RestaurantDaoImpl implements RestaurantDao {
                 Restaurant restaurant = new Restaurant(
                         resultSet.getLong(1),
                         resultSet.getString(2),
-                        resultSet.getString(3));
+                        resultSet.getString(3),
+                        resultSet.getString(4),
+                        resultSet.getString(5),
+                        resultSet.getString(6)
+                );
                 restaurants.add(restaurant);
             }
         } catch (Exception e) {
@@ -127,6 +152,22 @@ public class RestaurantDaoImpl implements RestaurantDao {
         return "Wrong name!";
     }
 
+    private String getFoundationDate(Long id) {
+        String query = "SELECT foundation_date FROM restaurants WHERE id = ?";
+        LocalDate date = null;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setObject(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                date = resultSet.getDate(1).toLocalDate();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assert date != null;
+        return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    }
+
     private void deleteRestaurant(String name) {
         String query = "DELETE FROM restaurants WHERE name = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -136,7 +177,6 @@ public class RestaurantDaoImpl implements RestaurantDao {
             e.printStackTrace();
         }
     }
-
 
     private void setColumnById(Long id, String columnName, Object value) {
         String query = "UPDATE restaurants SET " + columnName + " = ? WHERE id = ?";

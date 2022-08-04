@@ -8,6 +8,7 @@ public class Restaurant {
     private String description;
     private String phone_number;
     private String email_address;
+    private String foundation_date;
 
 
     public Restaurant() {
@@ -24,11 +25,21 @@ public class Restaurant {
         this.description = description;
     }
 
-    public Restaurant(String name, String description, String phone_number, String email_address) {
+    public Restaurant(String name, String description, String phone_number, String email_address, String foundation_date) {
         this.name = name;
         this.description = description;
         this.phone_number = phone_number;
         this.email_address = email_address;
+        this.foundation_date = foundation_date;
+    }
+
+    public Restaurant(Long id,String name, String description, String phone_number, String email_address, String foundation_date) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.phone_number = phone_number;
+        this.email_address = email_address;
+        this.foundation_date = foundation_date;
     }
 
     public Long getId() {
@@ -67,6 +78,14 @@ public class Restaurant {
         this.email_address = email_address;
     }
 
+    public String getFoundation_date() {
+        return foundation_date;
+    }
+
+    public void setFoundation_date(String foundation_date) {
+        this.foundation_date = foundation_date;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -88,6 +107,9 @@ public class Restaurant {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
+                ", phone_number='" + phone_number + '\'' +
+                ", email_address='" + email_address + '\'' +
+                ", foundation_date='" + foundation_date + '\'' +
                 '}';
     }
 }
