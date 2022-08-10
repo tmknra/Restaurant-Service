@@ -1,63 +1,79 @@
 package com.example.hw_5.controller;
 
+import com.example.hw_5.dto.in.RestaurantInDto;
+import com.example.hw_5.dto.out.RestaurantOutDto;
 import com.example.hw_5.entity.Restaurant;
 import com.example.hw_5.exception.FoundationDateIsExpiredException;
+import com.example.hw_5.mapper.RestaurantMapper;
 import com.example.hw_5.service.RestaurantService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.i18n.phonenumbers.NumberParseException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
 @RequestMapping("/restaurants")
 public class RestaurantController {
 
-    @Resource
-    private RestaurantService restaurantService;
+    private final RestaurantMapper restaurantMapper;
+    private final RestaurantService restaurantService;
+
+    public RestaurantController(RestaurantMapper restaurantMapper,
+                                RestaurantService restaurantService) {
+        this.restaurantMapper = restaurantMapper;
+        this.restaurantService = restaurantService;
+    }
 
     @GetMapping("/all")
-    public List<Restaurant> getAll() {
+    public List<RestaurantOutDto> getAll() {
         return restaurantService.getAllRestaurants();
     }
 
-    @GetMapping("/{name}")
-    public String getDescription(@PathVariable String name) {
-        return restaurantService.getDescriptionByName(name);
+    @GetMapping("/{id}")
+    public RestaurantOutDto getRestaurant(@PathVariable Long id) {
+        Restaurant restaurant = restaurantService.getRestaurant(id);
+        return restaurantMapper.restaurantToRestaurantOutDto(restaurant);
     }
 
     @GetMapping("/{id}/founded")
-    public String getFoundationDate(@PathVariable Long id) {
+    public LocalDate getFoundationDate(@PathVariable Long id) {
         return restaurantService.getFoundationDateById(id);
     }
 
-    @PutMapping("/new")
-    public void addNewRestaurant(@RequestBody Restaurant restaurant) throws FoundationDateIsExpiredException {
-        restaurantService.addNewRestaurant(restaurant);
+    @PostMapping("/new")
+    public RestaurantOutDto addNewRestaurant(@RequestBody RestaurantInDto restaurant) throws NumberParseException, FoundationDateIsExpiredException {
+        System.out.println(restaurant);
+        Restaurant restaurantEntity = restaurantService.createRestaurant(restaurant);
+        return restaurantMapper.restaurantToRestaurantOutDto(restaurantEntity);
     }
 
-    @PutMapping("/delete")
-    public void deleteRestaurantByName(@RequestBody String name) {
-        restaurantService.deleteRestaurantByName(name);
+    @PostMapping("/delete")
+    public void deleteRestaurantByName(@RequestBody JsonNode name) {
+        restaurantService.deleteRestaurantByName(name.get("name").asText());
     }
 
-    @PutMapping("/set_email/{id}")
-    public void setEmail(@PathVariable Long id, @RequestBody String email_address) {
-        restaurantService.setEmailById(id, email_address);
+    @PostMapping("/set_email/{id}")
+    public void setEmail(@PathVariable Long id, @RequestBody JsonNode email_address) throws JsonProcessingException {
+        restaurantService.setEmailById(id, email_address.get("email_address").asText());
     }
 
-    @PutMapping("/set_phone/{id}")
-    public void setPhoneNumber(@PathVariable Long id, @RequestBody String phone_number) throws NumberParseException {
-        restaurantService.setPhoneNumberById(id, phone_number);
+    @PostMapping("/set_phone/{id}")
+    public void setPhoneNumber(@PathVariable Long id, @RequestBody JsonNode phone_number) throws NumberParseException {
+        restaurantService.setPhoneNumberById(id, phone_number.get("phone_number").asText());
     }
 
-    @PutMapping("/set_foundation_date/{id}")
-    public void setFoundationDate(@PathVariable Long id, @RequestBody String foundationDate) throws FoundationDateIsExpiredException {
-        restaurantService.setFoundationDateById(id, foundationDate);
+    @PostMapping("/set_foundation_date/{id}")
+    public void setFoundationDate(@PathVariable Long id, @RequestBody JsonNode foundationDate) throws FoundationDateIsExpiredException {
+        LocalDate foundationDateFromJson = LocalDate.parse(foundationDate.get("foundation_date").asText(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        restaurantService.setFoundationDateById(id, foundationDateFromJson);
     }
 
-    @PutMapping("/change_description")
-    public void changeDescription(@RequestBody Restaurant restaurant) {
-        restaurantService.changeDescriptionByName(restaurant.getName(), restaurant.getDescription());
-    }
+    // @PutMapping("/change_description")
+    // public void changeDescription(@RequestBody Restaurant restaurant) {
+    //     restaurantService.changeDescriptionByName(restaurant.getName(), restaurant.getDescription());
+    // }
 }

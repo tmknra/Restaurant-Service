@@ -1,16 +1,22 @@
 package com.example.hw_5.service;
 
+import com.example.hw_5.dto.in.FeedbackInDto;
+import com.example.hw_5.dto.out.FeedbackOutDto;
 import com.example.hw_5.entity.Feedback;
 
 import java.util.List;
 
 public interface FeedbackService {
-    List<Feedback> getAllByRestaurantID(Long id);
+
+    Feedback getFeedback(Long id);
+
+    List<FeedbackOutDto> getAllByRestaurantId(Long restaurantId);
     Double getAverageRatingByRestaurantID(Long restaurantID);
     String getFeedbackTextByID(Long id);
 
-    void addNewFeedback(Feedback feedback);
-    void changeFeedbackByID(Long feedbackID, String newFeedback, Integer newRating);
+    Feedback addNewFeedback(FeedbackInDto feedback);
+    Feedback changeFeedbackByID(Long feedbackID, String newFeedback, Integer newRating);
 
-    void deleteFeedbackByRestaurantId(Long id);
+    void deleteFeedbackById(Long id);
+    void deleteAllByRestaurantId(Long restaurantId);
 }

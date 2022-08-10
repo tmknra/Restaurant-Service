@@ -1,63 +1,136 @@
 package com.example.hw_5.service.impl;
 
-import com.example.hw_5.dao.RestaurantDao;
+import com.example.hw_5.dto.in.RestaurantInDto;
+import com.example.hw_5.dto.out.RestaurantOutDto;
 import com.example.hw_5.entity.Restaurant;
 import com.example.hw_5.exception.FoundationDateIsExpiredException;
-import com.example.hw_5.service.RestaurantService;
+import com.example.hw_5.mapper.RestaurantMapper;
+import com.example.hw_5.repository.RestaurantRepository;
+import com.example.hw_5.util.Util;
 import com.google.i18n.phonenumbers.NumberParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class RestaurantServiceImpl implements RestaurantService {
+public class RestaurantServiceImpl implements com.example.hw_5.service.RestaurantService {
+
+    private final RestaurantRepository restaurantRepository;
+    private final RestaurantMapper restaurantMapper;
 
     @Autowired
-    private RestaurantDao restaurantDao;
-
-    @Override
-    public List<Restaurant> getAllRestaurants() {
-        return restaurantDao.getAllRestaurants();
+    public RestaurantServiceImpl(RestaurantRepository restaurantRepository,
+                                 RestaurantMapper restaurantMapper) {
+        this.restaurantRepository = restaurantRepository;
+        this.restaurantMapper = restaurantMapper;
     }
 
     @Override
-    public String getDescriptionByName(String restName) {
-        return restaurantDao.getDescriptionByName(restName);
+    public long createRestaurantByName(String name) {
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName(name);
+        Restaurant save = restaurantRepository.save(restaurant);
+        return save.getId();
     }
 
     @Override
-    public String getFoundationDateById(Long id) {
-        return restaurantDao.getFoundationDateById(id);
+    public long createRestaurantByNameAndDate(String name, LocalDate foundationDate) throws FoundationDateIsExpiredException {
+        if (foundationDate == null || LocalDate.now().isBefore(foundationDate)) {
+            throw new FoundationDateIsExpiredException(name, foundationDate);
+        }
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName(name);
+        restaurant.setFoundation_date(foundationDate);
+        Restaurant save = restaurantRepository.save(restaurant);
+        return save.getId();
     }
 
     @Override
-    public void addNewRestaurant (Restaurant restaurant) throws FoundationDateIsExpiredException {
-        restaurantDao.addNewRestaurant(restaurant);
+    public long createRestaurantByNameAndPhoneNumber(String name, String phoneNumber) throws NumberParseException {
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName(name);
+        String validatedNumber = Util.reformatRuTelephone(phoneNumber);
+        restaurant.setPhone_number(validatedNumber);
+        Restaurant save = restaurantRepository.save(restaurant);
+        return save.getId();
     }
 
     @Override
-    public void changeDescriptionByName(String restaurantName, String newDescription) {
-        restaurantDao.changeDescriptionByName(restaurantName, newDescription);
+    public Restaurant getRestaurant(Long id) {
+        return getRestaurantById(id);
+    }
+
+    @Override
+    public List<RestaurantOutDto> getAllRestaurants() {
+        List<Restaurant> all = restaurantRepository.findAll();
+        List<RestaurantOutDto> outDtos = new ArrayList<>();
+        for (Restaurant restaurant : all) {
+            outDtos.add(
+                    new RestaurantOutDto(
+                            restaurant.getId(),
+                            restaurant.getName(),
+                            restaurant.getDescription(),
+                            restaurant.getPhone_number(),
+                            restaurant.getEmail_address(),
+                            restaurant.getFoundation_date())
+            );
+        }
+        return outDtos;
+    }
+
+    @Override
+    public LocalDate getFoundationDateById(Long id) {
+        Restaurant restaurantById = getRestaurantById(id);
+        return restaurantById.getFoundation_date();
+    }
+
+    @Override
+    public Restaurant createRestaurant(RestaurantInDto restaurant) throws NumberParseException, FoundationDateIsExpiredException {
+        Restaurant restaurantEntity = restaurantMapper.restaurantInDtoToRestaurant(restaurant);
+        if (restaurant.getPhone_number() != null)
+            restaurantEntity.setPhone_number(Util.reformatRuTelephone(restaurant.getPhone_number()));
+        if (restaurant.getFoundation_date() != null)
+            Util.validateFoundationDate(restaurant.getName(), restaurant.getFoundation_date());
+        return restaurantRepository.save(restaurantEntity);
     }
 
     @Override
     public void setEmailById(Long id, String email) {
-        restaurantDao.setEmailById(id, email);
+        Restaurant restaurant = getRestaurant(id);
+        String validateEmailAddress = Util.validateEmailAddress(email);
+        restaurant.setEmail_address(validateEmailAddress);
+        restaurantRepository.save(restaurant);
     }
 
     @Override
     public void setPhoneNumberById(Long id, String number) throws NumberParseException {
-        restaurantDao.setPhoneNumberById(id, number);
+        Restaurant restaurant = getRestaurant(id);
+        String reformattedTelephone = Util.reformatRuTelephone(number);
+        restaurant.setPhone_number(reformattedTelephone);
+        restaurantRepository.save(restaurant);
     }
 
     @Override
-    public void setFoundationDateById(Long id, String date) throws FoundationDateIsExpiredException {
-        restaurantDao.setFoundationDateById(id, date);
+    public void setFoundationDateById(Long id, LocalDate date) throws FoundationDateIsExpiredException {
+        Restaurant restaurant = getRestaurant(id);
+        Util.validateFoundationDate(restaurant.getName(), date);
+        restaurant.setFoundation_date(date);
+        restaurantRepository.save(restaurant);
     }
 
     @Override
     public void deleteRestaurantByName(String name) {
-        restaurantDao.deleteRestaurantByName(name);
+        Restaurant restaurantByName = restaurantRepository.findByName(name);
+        restaurantRepository.delete(restaurantByName);
+    }
+
+
+    private Restaurant getRestaurantById(Long id) {
+        Optional<Restaurant> byId = restaurantRepository.findById(id);
+        return byId.get();
     }
 }

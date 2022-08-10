@@ -1,6 +1,8 @@
 package com.example.hw_5.service;
 
 import com.example.hw_5.Hw5ApplicationTests;
+import com.example.hw_5.dto.in.FeedbackInDto;
+import com.example.hw_5.dto.out.FeedbackOutDto;
 import com.example.hw_5.entity.Feedback;
 import com.example.hw_5.entity.Restaurant;
 import com.example.hw_5.exception.FoundationDateIsExpiredException;
@@ -23,41 +25,56 @@ public class FeedbackServiceTest extends Hw5ApplicationTests {
     @Autowired
     private RestaurantService restaurantService;
 
-    private Restaurant testRestaurant;
-    private Feedback testFeedback;
-    private Long testRestaurantId;
+    private Long testRestId;
     private Long testFeedbackId;
 
     @BeforeAll
-    void setUp() throws FoundationDateIsExpiredException {
-        testRestaurant = new Restaurant("test", "test");
-        restaurantService.addNewRestaurant(testRestaurant);
-        List<Restaurant> allRestaurants = restaurantService.getAllRestaurants();
-        testRestaurantId = allRestaurants.get(allRestaurants.size() - 1).getId();
+    void setUp() {
+        testRestId = restaurantService.createRestaurantByName("testName");
 
-        testFeedback = new Feedback(testRestaurantId, "testFeedback", 1);
-        feedbackService.addNewFeedback(testFeedback);
-        List<Feedback> allByRestaurantID = feedbackService.getAllByRestaurantID(testRestaurantId);
-        testFeedbackId = allByRestaurantID.get(allByRestaurantID.size() - 1).getId();
+        FeedbackInDto testFeedback1 = FeedbackInDto.builder()
+                .restaurantid(testRestId)
+                .feedback("testFeedback1")
+                .rating(3)
+                .build();
+
+        FeedbackInDto testFeedback2 = FeedbackInDto.builder()
+                .restaurantid(testRestId)
+                .feedback("testFeedback2")
+                .rating(4)
+                .build();
+
+        FeedbackInDto testFeedback3 = FeedbackInDto.builder()
+                .restaurantid(testRestId)
+                .feedback("testFeedback3")
+                .rating(5)
+                .build();
+
+        Feedback feedback1 = feedbackService.addNewFeedback(testFeedback1);
+        testFeedbackId = feedback1.getId();
+        feedbackService.addNewFeedback(testFeedback2);
+        feedbackService.addNewFeedback(testFeedback3);
     }
 
     @Test
     void getAllByRestaurantID() {
-        List<Feedback> allByRestaurantID = feedbackService.getAllByRestaurantID(testRestaurantId);
-        Feedback feedback = allByRestaurantID.get(0);
-        assertEquals(testRestaurantId, feedback.getRestaurantID());
+        List<FeedbackOutDto> allByRestaurantId = feedbackService.getAllByRestaurantId(testRestId);
+        for (FeedbackOutDto feedbackOutDto : allByRestaurantId) {
+            assertEquals(testRestId, feedbackOutDto.getRestaurantid());
+        }
     }
 
     @Test
     void getAverageRatingByRestaurantID() {
-        Double averageRating = feedbackService.getAverageRatingByRestaurantID(testRestaurantId);
-        assertEquals(testFeedback.getRating().doubleValue(), averageRating);
+        Double expectedAverageRating = 4.0;
+        Double averageRating = feedbackService.getAverageRatingByRestaurantID(testRestId);
+        assertEquals(expectedAverageRating, averageRating);
     }
 
     @Test
     void getFeedbackTextByID() {
         String feedbackTextByID = feedbackService.getFeedbackTextByID(testFeedbackId);
-        assertEquals(testFeedback.getFeedback(), feedbackTextByID);
+        assertEquals("testFeedback1", feedbackTextByID);
     }
 
     @Test
@@ -65,15 +82,10 @@ public class FeedbackServiceTest extends Hw5ApplicationTests {
         String testFeed = "qqq";
         Integer testRating = 3;
         feedbackService.changeFeedbackByID(testFeedbackId, testFeed, testRating);
-        List<Feedback> all = feedbackService.getAllByRestaurantID(testRestaurantId);
-        Feedback feedback = all.get(0);
+        Feedback feedback = feedbackService.getFeedback(testFeedbackId);
+
         assertEquals(testFeed, feedback.getFeedback());
         assertEquals(testRating, feedback.getRating());
     }
 
-    @AfterAll
-    void clear(){
-        feedbackService.deleteFeedbackByRestaurantId(testRestaurantId);
-        restaurantService.deleteRestaurantByName(testRestaurant.getName());
-    }
 }

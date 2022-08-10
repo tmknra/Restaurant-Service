@@ -4,8 +4,8 @@ import java.time.LocalDate;
 
 public class FoundationDateIsExpiredException extends Exception {
     private final String restaurantName;
-    private final String foundationDate;
-    public FoundationDateIsExpiredException(String name, String foundationDate) {
+    private final LocalDate foundationDate;
+    public FoundationDateIsExpiredException(String name, LocalDate foundationDate) {
         this.restaurantName = name;
         this.foundationDate = foundationDate;
     }

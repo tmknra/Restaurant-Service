@@ -64,8 +64,8 @@ public class RestaurantDaoImpl implements RestaurantDao {
 
     @Override
     public void addNewRestaurant(Restaurant restaurant) throws FoundationDateIsExpiredException {
-        LocalDate parse = LocalDate.parse(restaurant.getFoundation_date(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        if (restaurant.getFoundation_date() == null || LocalDate.now(ZoneId.systemDefault()).isBefore(parse)) {
+        // LocalDate parse = LocalDate.parse(restaurant.getFoundation_date(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        if (restaurant.getFoundation_date() == null || LocalDate.now(ZoneId.systemDefault()).isBefore(restaurant.getFoundation_date())) {
             throw new FoundationDateIsExpiredException(restaurant.getName(), restaurant.getFoundation_date());
         }
         String query = "INSERT INTO restaurants (name, description, phone_number, email_address, foundation_date) VALUES(?, ?, ?, ?, ?)";
@@ -74,7 +74,7 @@ public class RestaurantDaoImpl implements RestaurantDao {
             preparedStatement.setObject(2, restaurant.getDescription());
             preparedStatement.setObject(3, restaurant.getPhone_number());
             preparedStatement.setObject(4, restaurant.getEmail_address());
-            preparedStatement.setObject(5, LocalDate.parse(restaurant.getFoundation_date(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            preparedStatement.setObject(5, restaurant.getFoundation_date());
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,7 +127,7 @@ public class RestaurantDaoImpl implements RestaurantDao {
                         resultSet.getString(3),
                         resultSet.getString(4),
                         resultSet.getString(5),
-                        resultSet.getString(6)
+                        (LocalDate) resultSet.getObject(6)
                 );
                 restaurants.add(restaurant);
             }

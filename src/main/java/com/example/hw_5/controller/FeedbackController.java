@@ -1,22 +1,38 @@
 package com.example.hw_5.controller;
 
+import com.example.hw_5.dto.in.FeedbackInDto;
+import com.example.hw_5.dto.out.FeedbackOutDto;
 import com.example.hw_5.entity.Feedback;
+import com.example.hw_5.mapper.FeedbackMapper;
 import com.example.hw_5.service.FeedbackService;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
 @RequestMapping("/feedbacks")
 public class FeedbackController {
 
-    @Resource
-    private FeedbackService feedbackService;
+    private final FeedbackService feedbackService;
+    private final FeedbackMapper feedbackMapper;
 
-    @GetMapping("/{restID}")
-    public List<Feedback> getFeedbacks(@PathVariable Long restID){
-        return feedbackService.getAllByRestaurantID(restID);
+    @Autowired
+    public FeedbackController(FeedbackService feedbackService, FeedbackMapper feedbackMapper) {
+        this.feedbackService = feedbackService;
+        this.feedbackMapper = feedbackMapper;
+    }
+
+    @GetMapping("/get/{id}")
+    public FeedbackOutDto getFeedbackById(@PathVariable Long id){
+        Feedback feedback = feedbackService.getFeedback(id);
+        return feedbackMapper.feedbackToFeedbackOutDto(feedback);
+    }
+
+    @GetMapping("/all/{restID}")
+    public List<FeedbackOutDto> getFeedbacks(@PathVariable Long restID){
+        return feedbackService.getAllByRestaurantId(restID);
     }
 
     @GetMapping("/get_rating/{id}")
@@ -29,18 +45,23 @@ public class FeedbackController {
         return feedbackService.getFeedbackTextByID(id);
     }
 
-    @PutMapping("/new")
-    public void addFeedbackByRestaurantID(@RequestBody Feedback feedback){
-        feedbackService.addNewFeedback(feedback);
+    @PostMapping("/new")
+    public Feedback addFeedbackByRestaurantID(@RequestBody FeedbackInDto feedback){
+        return feedbackService.addNewFeedback(feedback);
     }
 
-    @PutMapping("/change")
-    public void changeFeedbackByID(@RequestBody Feedback feedback){
-        feedbackService.changeFeedbackByID(feedback.getId(), feedback.getFeedback(), feedback.getRating());
+    @PostMapping("/change")
+    public Feedback changeFeedbackByID(@RequestBody FeedbackInDto feedback){
+        return feedbackService.changeFeedbackByID(feedback.getId(), feedback.getFeedback(), feedback.getRating());
     }
 
-    @PutMapping("/delete")
-    public void deleteFeedbackByRestaurantId(@RequestBody Long id){
-        feedbackService.deleteFeedbackByRestaurantId(id);
+    @PostMapping("/delete")
+    public void deleteFeedbackById(@RequestBody JsonNode id){
+        feedbackService.deleteFeedbackById(id.get("id").asLong());
+    }
+
+    @PostMapping("/deleteAll/{restaurantId}")
+    public void deleteAllByRestaurantId(@PathVariable Long restaurantId){
+        feedbackService.deleteAllByRestaurantId(restaurantId);
     }
 }

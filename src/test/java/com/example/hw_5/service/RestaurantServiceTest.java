@@ -1,15 +1,16 @@
 package com.example.hw_5.service;
 
 import com.example.hw_5.Hw5ApplicationTests;
+import com.example.hw_5.dto.in.RestaurantInDto;
+import com.example.hw_5.dto.out.RestaurantOutDto;
 import com.example.hw_5.entity.Restaurant;
 import com.example.hw_5.exception.FoundationDateIsExpiredException;
+import com.google.i18n.phonenumbers.NumberParseException;
 import org.junit.jupiter.api.*;
 import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,58 +24,86 @@ public class RestaurantServiceTest extends Hw5ApplicationTests {
     @Autowired
     private RestaurantService restaurantService;
 
-    private Long id;
+    private Restaurant testRestaurant;
 
     @BeforeAll
-    void setUp() throws FoundationDateIsExpiredException {
-        Restaurant restaurant = new Restaurant("testRest", "testDescription", "", "", "22/03/2020");
-        restaurantService.addNewRestaurant(restaurant);
-        List<Restaurant> allRestaurants = restaurantService.getAllRestaurants();
-        id = allRestaurants.get(allRestaurants.size() - 1).getId();
+    void setUp() throws FoundationDateIsExpiredException, NumberParseException {
+        RestaurantInDto restaurantInDto = new RestaurantInDto("testName",
+                "testDescription",
+                "+79991122333",
+                "",
+                LocalDate.of(2022, 3, 2)
+        );
+        testRestaurant = restaurantService.createRestaurant(restaurantInDto);
     }
 
+    // @Test
+    // void createRestaurantByName(){
+    //     String testName = "testName";
+    //     long restaurantByName = restaurantService.createRestaurantByName(testName);
+    //     assertEquals(testName, restaurantService.getRestaurant(restaurantByName).getName());
+    // }
+    //
+    // @Test
+    // void createRestaurantByNameAndDate() throws FoundationDateIsExpiredException {
+    //     String testName = "testName";
+    //     LocalDate testDate = LocalDate.of(2020, 3, 3);
+    //
+    //     long restaurantByNameAndDate = restaurantService.createRestaurantByNameAndDate(testName, testDate);
+    //     assertEquals(testName, restaurantService.getRestaurant(restaurantByNameAndDate).getName());
+    //     assertEquals(testDate, restaurantService.getRestaurant(restaurantByNameAndDate).getFoundation_date());
+    // }
+    //
+    // @Test
+    // void createRestaurantByNameAndPhoneNumber() throws NumberParseException {
+    //     String testName = "testName";
+    //     String testNumber = "+79991122333";
+    //
+    //     long restaurantByNameAndPhoneNumber = restaurantService.createRestaurantByNameAndPhoneNumber(testName, testNumber);
+    //     assertEquals(testName, restaurantService.getRestaurant(restaurantByNameAndPhoneNumber).getName());
+    //     assertEquals(testNumber, restaurantService.getRestaurant(restaurantByNameAndPhoneNumber).getPhone_number());
+    // }
+
+
+
     @Test
-    void getDescriptionByName() {
-        String testName = "testRest";
-        String testDescription = "testDescription";
-        String description = restaurantService.getDescriptionByName(testName);
-        assertEquals(testDescription, description);
+    void getRestaurant(){
+        Restaurant restaurant = restaurantService.getRestaurant(this.testRestaurant.getId());
+        assertEquals(testRestaurant.getId(), restaurant.getId());
     }
 
     @Test
     void getAllRestaurants() {
-        String testName = "testRest";
-        List<Restaurant> all = restaurantService.getAllRestaurants();
+        String testName = "testName";
+        List<RestaurantOutDto> all = restaurantService.getAllRestaurants();
         String targetName = all.get(all.size() - 1).getName();
         assertEquals(testName, targetName);
     }
 
     @Test
-    void changeDescriptionByName() {
-        String testName = "testRest";
-        restaurantService.changeDescriptionByName(testName, "newTestDescription");
-        String description = restaurantService.getDescriptionByName(testName);
-        assertEquals("newTestDescription", description);
-    }
-
-    @Test
     void setFoundationDate() throws FoundationDateIsExpiredException {
-        String instantExpected = "11/02/2001";
+        LocalDate instantExpected = LocalDate.of(2011, 2, 11);
 
         MockedStatic<LocalDate> mockedStatic = mockStatic(LocalDate.class, CALLS_REAL_METHODS);
-        LocalDate parse = LocalDate.parse(instantExpected, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        mockedStatic.when(LocalDate::now).thenReturn(parse);
+        mockedStatic.when(LocalDate::now).thenReturn(instantExpected);
 
-        assertThrowsExactly(FoundationDateIsExpiredException.class, () ->  restaurantService.addNewRestaurant(
-                new Restaurant("testRest", "testDescription", "", "", "05/08/2022")));
+        assertThrowsExactly(FoundationDateIsExpiredException.class, () ->
+                restaurantService.createRestaurant(
+                        new RestaurantInDto("qwe", "zxc", "+79991111222", "asd@qwe.rt",
+                                LocalDate.of(2023, 1, 1))));
 
-        restaurantService.setFoundationDateById(id, instantExpected);
-        String foundationDateById = restaurantService.getFoundationDateById(id);
+        assertThrowsExactly(FoundationDateIsExpiredException.class, () ->
+                restaurantService.setFoundationDateById(
+                        testRestaurant.getId(), LocalDate.of(2023, 1, 1)
+                ));
+
+        restaurantService.setFoundationDateById(testRestaurant.getId(), instantExpected);
+        LocalDate foundationDateById = restaurantService.getFoundationDateById(testRestaurant.getId());
         assertEquals(instantExpected, foundationDateById);
     }
 
     @AfterAll
     void clear() {
-        restaurantService.deleteRestaurantByName("testRest");
+        restaurantService.deleteRestaurantByName("testName");
     }
 }
