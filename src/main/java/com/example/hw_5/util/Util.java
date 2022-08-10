@@ -1,11 +1,11 @@
 package com.example.hw_5.util;
 
+import com.example.hw_5.exception.FoundationDateIsExpiredException;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
 public class Util {
@@ -29,11 +29,8 @@ public class Util {
         return email;
     }
 
-    public static LocalDate validateFoundationDate(String date) {
-        String datePattern = "dd/MM/yyyy";
-        LocalDate parse = LocalDate.parse(date, DateTimeFormatter.ofPattern(datePattern));
-        if (parse.equals(LocalDate.now()))
-            throw new IllegalArgumentException("Foundation date cannot be today");
-        return parse;
+    public static void validateFoundationDate(String restName, LocalDate date) throws FoundationDateIsExpiredException {
+        if (date!=null && LocalDate.now().isBefore(date))
+            throw new FoundationDateIsExpiredException(restName, date);
     }
 }

@@ -2,8 +2,8 @@
 create table if not exists restaurants
 (
     id          serial primary key,
-    name        varchar(45) not null,
-    description text        not null
+    name        varchar(45),
+    description text
 );
 
 insert into restaurants (name, description)

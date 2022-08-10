@@ -1,11 +1,9 @@
 package com.example.hw_5.dao.impl;
 
-import com.example.hw_5.config.DatabaseConnectionProperties;
 import com.example.hw_5.dao.FeedbackDao;
 import com.example.hw_5.entity.Feedback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -24,8 +22,8 @@ public class FeedbackDaoImpl implements FeedbackDao {
 
     private static Connection connection;
 
-    @Autowired
-    private DatabaseConnectionProperties databaseConnectionProperties;
+    // @Autowired
+    // private DatabaseConnectionProperties databaseConnectionProperties;
 
     @PostConstruct
     public void initialize() {
@@ -100,7 +98,7 @@ public class FeedbackDaoImpl implements FeedbackDao {
         String query = "INSERT INTO feedbacks (restaurant_id, feedback, rating)" +
                         "VALUES(?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setObject(1, feedback.getRestaurantID());
+            preparedStatement.setObject(1, feedback.getRestaurantid());
             preparedStatement.setObject(2, feedback.getFeedback());
             preparedStatement.setObject(3, feedback.getRating());
             preparedStatement.executeUpdate();
