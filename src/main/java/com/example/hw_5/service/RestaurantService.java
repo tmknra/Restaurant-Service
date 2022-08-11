@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface RestaurantService {
+
     long createRestaurantByName(String name);
     long createRestaurantByNameAndDate(String name, LocalDate foundationDate) throws FoundationDateIsExpiredException;
     long createRestaurantByNameAndPhoneNumber(String name, String phoneNumber) throws NumberParseException;
@@ -26,4 +27,5 @@ public interface RestaurantService {
     void setFoundationDateById(Long id, LocalDate date) throws FoundationDateIsExpiredException;
 
     void deleteRestaurantByName(String name);
+
 }

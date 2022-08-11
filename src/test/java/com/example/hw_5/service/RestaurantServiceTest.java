@@ -37,35 +37,6 @@ public class RestaurantServiceTest extends Hw5ApplicationTests {
         testRestaurant = restaurantService.createRestaurant(restaurantInDto);
     }
 
-    // @Test
-    // void createRestaurantByName(){
-    //     String testName = "testName";
-    //     long restaurantByName = restaurantService.createRestaurantByName(testName);
-    //     assertEquals(testName, restaurantService.getRestaurant(restaurantByName).getName());
-    // }
-    //
-    // @Test
-    // void createRestaurantByNameAndDate() throws FoundationDateIsExpiredException {
-    //     String testName = "testName";
-    //     LocalDate testDate = LocalDate.of(2020, 3, 3);
-    //
-    //     long restaurantByNameAndDate = restaurantService.createRestaurantByNameAndDate(testName, testDate);
-    //     assertEquals(testName, restaurantService.getRestaurant(restaurantByNameAndDate).getName());
-    //     assertEquals(testDate, restaurantService.getRestaurant(restaurantByNameAndDate).getFoundation_date());
-    // }
-    //
-    // @Test
-    // void createRestaurantByNameAndPhoneNumber() throws NumberParseException {
-    //     String testName = "testName";
-    //     String testNumber = "+79991122333";
-    //
-    //     long restaurantByNameAndPhoneNumber = restaurantService.createRestaurantByNameAndPhoneNumber(testName, testNumber);
-    //     assertEquals(testName, restaurantService.getRestaurant(restaurantByNameAndPhoneNumber).getName());
-    //     assertEquals(testNumber, restaurantService.getRestaurant(restaurantByNameAndPhoneNumber).getPhone_number());
-    // }
-
-
-
     @Test
     void getRestaurant(){
         Restaurant restaurant = restaurantService.getRestaurant(this.testRestaurant.getId());
