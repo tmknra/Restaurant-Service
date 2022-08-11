@@ -19,4 +19,5 @@ public interface FeedbackService {
 
     void deleteFeedbackById(Long id);
     void deleteAllByRestaurantId(Long restaurantId);
+
 }

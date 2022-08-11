@@ -1,8 +1,6 @@
 package com.example.hw_5.dto.out;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 
 

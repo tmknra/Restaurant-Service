@@ -71,9 +71,4 @@ public class RestaurantController {
         LocalDate foundationDateFromJson = LocalDate.parse(foundationDate.get("foundation_date").asText(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         restaurantService.setFoundationDateById(id, foundationDateFromJson);
     }
-
-    // @PutMapping("/change_description")
-    // public void changeDescription(@RequestBody Restaurant restaurant) {
-    //     restaurantService.changeDescriptionByName(restaurant.getName(), restaurant.getDescription());
-    // }
 }
