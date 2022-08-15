@@ -1,10 +1,17 @@
 package com.example.hw_5.dto.in;
 
+import com.example.hw_5.validation.constraint.EmailValidation;
+import com.example.hw_5.validation.constraint.PhoneNumberValidation;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.lang.Nullable;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 @Builder
@@ -13,9 +20,15 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class RestaurantInDto {
 
+    @NotBlank(message = "Can not be empty.")
     private String name;
     private String description;
+
+    @PhoneNumberValidation
     private String phone_number;
+
+    @Nullable
+    @EmailValidation
     private String email_address;
 
     @DateTimeFormat(pattern = "YYYY-MM-DD")
