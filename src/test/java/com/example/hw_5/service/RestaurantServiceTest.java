@@ -4,7 +4,9 @@ import com.example.hw_5.Hw5ApplicationTests;
 import com.example.hw_5.dto.in.RestaurantInDto;
 import com.example.hw_5.dto.out.RestaurantOutDto;
 import com.example.hw_5.entity.Restaurant;
-import com.example.hw_5.exception.FoundationDateIsExpiredException;
+import com.example.hw_5.exception.entity.FoundationDateIsExpiredException;
+import com.example.hw_5.exception.entity.PhoneNumberNotRuException;
+import com.example.hw_5.exception.entity.RestaurantNotFoundException;
 import com.google.i18n.phonenumbers.NumberParseException;
 import org.junit.jupiter.api.*;
 import org.mockito.MockedStatic;
@@ -27,7 +29,7 @@ public class RestaurantServiceTest extends Hw5ApplicationTests {
     private Restaurant testRestaurant;
 
     @BeforeAll
-    void setUp() throws FoundationDateIsExpiredException, NumberParseException {
+    void setUp() throws FoundationDateIsExpiredException, NumberParseException, PhoneNumberNotRuException {
         RestaurantInDto restaurantInDto = new RestaurantInDto("testName",
                 "testDescription",
                 "+79991122333",
@@ -38,7 +40,7 @@ public class RestaurantServiceTest extends Hw5ApplicationTests {
     }
 
     @Test
-    void getRestaurant(){
+    void getRestaurant() throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantService.getRestaurant(this.testRestaurant.getId());
         assertEquals(testRestaurant.getId(), restaurant.getId());
     }
@@ -52,7 +54,7 @@ public class RestaurantServiceTest extends Hw5ApplicationTests {
     }
 
     @Test
-    void setFoundationDate() throws FoundationDateIsExpiredException {
+    void setFoundationDate() throws FoundationDateIsExpiredException, RestaurantNotFoundException {
         LocalDate instantExpected = LocalDate.of(2011, 2, 11);
 
         MockedStatic<LocalDate> mockedStatic = mockStatic(LocalDate.class, CALLS_REAL_METHODS);
@@ -73,8 +75,4 @@ public class RestaurantServiceTest extends Hw5ApplicationTests {
         assertEquals(instantExpected, foundationDateById);
     }
 
-    @AfterAll
-    void clear() {
-        restaurantService.deleteRestaurantByName("testName");
-    }
 }

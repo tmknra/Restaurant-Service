@@ -12,8 +12,5 @@ public abstract class RestaurantMapper {
 
     public abstract RestaurantOutDto restaurantToRestaurantOutDto(Restaurant restaurant);
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "phone_number",
-            expression = "java(com.example.hw_5.util.Util.reformatRuTelephone(restaurant.getPhone_number()))"
-    )
     public abstract Restaurant restaurantInDtoToRestaurant(RestaurantInDto restaurant) throws NumberParseException;
 }

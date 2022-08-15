@@ -1,4 +1,4 @@
-package com.example.hw_5.exception;
+package com.example.hw_5.exception.entity;
 
 import java.time.LocalDate;
 
@@ -9,7 +9,6 @@ public class FoundationDateIsExpiredException extends Exception {
         this.restaurantName = name;
         this.foundationDate = foundationDate;
     }
-
     @Override
     public String toString() {
         return "Restaurant with name \"" + restaurantName + " \"" +

@@ -2,12 +2,12 @@ package com.example.hw_5.dao.impl;
 
 import com.example.hw_5.dao.RestaurantDao;
 import com.example.hw_5.entity.Restaurant;
-import com.example.hw_5.exception.FoundationDateIsExpiredException;
+import com.example.hw_5.exception.entity.FoundationDateIsExpiredException;
+import com.example.hw_5.exception.entity.PhoneNumberNotRuException;
 import com.example.hw_5.util.Util;
 import com.google.i18n.phonenumbers.NumberParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -100,7 +100,7 @@ public class RestaurantDaoImpl implements RestaurantDao {
 
 
     @Override
-    public void setPhoneNumberById(Long id, String number) throws NumberParseException {
+    public void setPhoneNumberById(Long id, String number) throws NumberParseException, PhoneNumberNotRuException {
         setColumnById(id, "phone_number", Util.reformatRuTelephone(number));
     }
 

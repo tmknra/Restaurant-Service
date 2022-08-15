@@ -1,5 +1,6 @@
 package com.example.hw_5.util;
 
+import com.example.hw_5.exception.entity.PhoneNumberNotRuException;
 import com.google.i18n.phonenumbers.NumberParseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class UtilTest {
     // TODO: add Date validation test
     @Test
-    void reformatRuTelephoneRemoveWhiteSpaces() throws NumberParseException {
+    void reformatRuTelephoneRemoveWhiteSpaces() throws NumberParseException, PhoneNumberNotRuException {
         String reformatted = Util.reformatRuTelephone("+7(999)-11-11-111");
         assertEquals("+79991111111", reformatted);
         reformatted = Util.reformatRuTelephone("+7-999-99-11-111");
