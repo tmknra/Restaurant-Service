@@ -1,7 +1,6 @@
 package com.example.restaurant_service.service.impl;
 
 import com.example.restaurant_service.dto.in.RestaurantInDto;
-import com.example.restaurant_service.dto.out.RestaurantOutDto;
 import com.example.restaurant_service.entity.Restaurant;
 import com.example.restaurant_service.exception.entity.FoundationDateIsExpiredException;
 import com.example.restaurant_service.exception.entity.PhoneNumberNotRuException;
@@ -12,12 +11,12 @@ import com.example.restaurant_service.service.RestaurantService;
 import com.example.restaurant_service.util.Util;
 import com.google.i18n.phonenumbers.NumberParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -69,22 +68,23 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<RestaurantOutDto> getAllRestaurants() {
-        List<Restaurant> all = restaurantRepository.findAll();
-        List<RestaurantOutDto> outDtos = new ArrayList<>();
-        for (Restaurant restaurant : all) {
-            outDtos.add(
-                    RestaurantOutDto.builder()
-                            .id(restaurant.getId())
-                            .name(restaurant.getName())
-                            .description(restaurant.getDescription())
-                            .phone_number(restaurant.getPhone_number())
-                            .email_address(restaurant.getEmail_address())
-                            .foundation_date(restaurant.getFoundation_date())
-                            .build()
-            );
-        }
-        return outDtos;
+    public Page<Restaurant> getAllRestaurants(Pageable pageable) {
+        return restaurantRepository.findAll(pageable);
+        // List<Restaurant> all = restaurantRepository.findAll();
+        // List<RestaurantOutDto> outDtos = new ArrayList<>();
+        // for (Restaurant restaurant : all) {
+        //     outDtos.add(
+        //             RestaurantOutDto.builder()
+        //                     .id(restaurant.getId())
+        //                     .name(restaurant.getName())
+        //                     .description(restaurant.getDescription())
+        //                     .phone_number(restaurant.getPhone_number())
+        //                     .email_address(restaurant.getEmail_address())
+        //                     .foundation_date(restaurant.getFoundation_date())
+        //                     .build()
+        //     );
+        // }
+        // return outDtos;
     }
 
     @Override

@@ -9,6 +9,8 @@ import com.example.restaurant_service.repository.FeedbackRepository;
 import com.example.restaurant_service.repository.RestaurantRepository;
 import com.example.restaurant_service.service.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,9 +38,13 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public List<String> getAllByRestaurantId(Long restaurantId) {
-        return feedbackRepository.findAllByRestaurantId(restaurantId)
-                .stream().map(Feedback::getFeedback).collect(Collectors.toList());
+    public Page<Feedback> getAllByRestaurantId(Pageable pageable, Long restaurantId) {
+        // feedbackRepository.findAllByRestaurantId(pageable);
+        // feedbackRepository.findAll(pageable);
+        return feedbackRepository.findAllByRestaurantId(pageable, restaurantId);
+        // return feedbackRepository.findAllByRestaurantId(pageable, restaurantId)
+        //         .stream().map(feedbackMapper::feedbackToFeedbackOutDto)
+        //         .collect(Collectors.toList());
     }
 
     @Override

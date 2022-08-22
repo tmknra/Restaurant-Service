@@ -11,6 +11,8 @@ import com.example.restaurant_service.service.RestaurantService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.i18n.phonenumbers.NumberParseException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -20,7 +22,6 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -37,8 +38,9 @@ public class RestaurantController {
     }
 
     @GetMapping("/all")
-    public List<RestaurantOutDto> getAll() {
-        return restaurantService.getAllRestaurants();
+    public Page<RestaurantOutDto> getAll(Pageable pageable) {
+        Page<Restaurant> restaurants = restaurantService.getAllRestaurants(pageable);
+        return restaurants.map(restaurantMapper::restaurantToRestaurantOutDto);
     }
 
     @GetMapping("/{id}")
@@ -87,7 +89,7 @@ public class RestaurantController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException exception){
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException exception) {
         Map<String, String> errors = new HashMap<>();
         exception.getBindingResult().getAllErrors().forEach(
                 error -> {

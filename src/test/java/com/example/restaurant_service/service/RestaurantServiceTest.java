@@ -2,7 +2,6 @@ package com.example.restaurant_service.service;
 
 import com.example.restaurant_service.RestaurantServiceAppTests;
 import com.example.restaurant_service.dto.in.RestaurantInDto;
-import com.example.restaurant_service.dto.out.RestaurantOutDto;
 import com.example.restaurant_service.entity.Restaurant;
 import com.example.restaurant_service.exception.entity.FoundationDateIsExpiredException;
 import com.example.restaurant_service.exception.entity.PhoneNumberNotRuException;
@@ -11,6 +10,7 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import org.junit.jupiter.api.*;
 import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -48,8 +48,8 @@ public class RestaurantServiceTest extends RestaurantServiceAppTests {
     @Test
     void getAllRestaurants() {
         String testName = "testName";
-        List<RestaurantOutDto> all = restaurantService.getAllRestaurants();
-        String targetName = all.get(all.size() - 1).getName();
+        List<Restaurant> restaurants = restaurantService.getAllRestaurants(Pageable.unpaged()).stream().toList();
+        String targetName = restaurants.get(restaurants.size() - 1).getName();
         assertEquals(testName, targetName);
     }
 

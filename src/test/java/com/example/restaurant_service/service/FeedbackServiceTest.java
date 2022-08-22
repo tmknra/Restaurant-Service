@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -56,7 +57,9 @@ public class FeedbackServiceTest extends RestaurantServiceAppTests {
 
     @Test
     void getAllByRestaurantID() {
-        List<String> allByRestaurantId = feedbackService.getAllByRestaurantId(testRestId);
+        List<String> allByRestaurantId = feedbackService.getAllByRestaurantId(Pageable.unpaged(), testRestId)
+                .stream()
+                .map(Feedback::getFeedback).toList();
         assertEquals("testFeedback1", allByRestaurantId.get(0));
         assertEquals("testFeedback2", allByRestaurantId.get(1));
         assertEquals("testFeedback3", allByRestaurantId.get(2));

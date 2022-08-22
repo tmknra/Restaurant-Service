@@ -8,6 +8,8 @@ import com.example.restaurant_service.mapper.FeedbackMapper;
 import com.example.restaurant_service.service.FeedbackService;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -38,8 +40,8 @@ public class FeedbackController {
     }
 
     @GetMapping("/all/{restID}")
-    public List<String> getFeedbacks(@PathVariable Long restID){
-        return feedbackService.getAllByRestaurantId(restID);
+    public Page<FeedbackOutDto> getFeedbacks(Pageable pageable, @PathVariable Long restID){
+        return feedbackService.getAllByRestaurantId(pageable, restID).map(feedbackMapper::feedbackToFeedbackOutDto);
     }
 
     @GetMapping("/get_rating/{id}")
