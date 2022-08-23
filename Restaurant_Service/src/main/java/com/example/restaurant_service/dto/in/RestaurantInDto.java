@@ -2,13 +2,11 @@ package com.example.restaurant_service.dto.in;
 
 import com.example.restaurant_service.validation.constraint.EmailValidation;
 import com.example.restaurant_service.validation.constraint.PhoneNumberValidation;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotBlank;
@@ -31,8 +29,7 @@ public class RestaurantInDto {
     @EmailValidation
     private String email_address;
 
-    @DateTimeFormat(pattern = "YYYY-MM-DD")
-    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private final LocalDate foundation_date;
 
 }
