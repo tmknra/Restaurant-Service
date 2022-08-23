@@ -5,5 +5,5 @@ create table if not exists users
     name              varchar(45)  not null,
     patronymic        varchar(45)  not null,
     email             varchar(255) not null,
-    registration_date date default current_date
+    registration_date timestamp default current_date
 );

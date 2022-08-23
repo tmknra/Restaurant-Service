@@ -18,7 +18,8 @@ public class UserOutDto {
     private String patronymic;
     private String email;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    // @EqualsAndHashCode.Exclude
     private LocalDateTime registrationDate;
 
 }

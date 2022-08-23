@@ -9,8 +9,8 @@ import com.example.userservice.repository.UserRepository;
 import com.example.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserOutDto createUser(UserInDto user) {
         UserEntity save = userRepository.save(userMapper.userInDtoToUserEntity(user));
         System.out.println(save);
@@ -36,6 +37,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserOutDto updateUser(UserInDto user, long userId) throws UserNotFoundException {
         UserEntity userById = findUserById(userId);
         if (user.getLastname()!=null)
@@ -46,8 +48,8 @@ public class UserServiceImpl implements UserService {
             userById.setPatronymic(user.getPatronymic());
         if (user.getEmail()!=null)
             userById.setEmail(user.getEmail());
-        if (user.getRegistration_date()!=null)
-            userById.setRegistrationDate(user.getRegistration_date());
+        if (user.getRegistrationDate()!=null)
+            userById.setRegistrationDate(user.getRegistrationDate());
         return userMapper.userEntityToUserOutDto(userRepository.save(userById));
     }
 
