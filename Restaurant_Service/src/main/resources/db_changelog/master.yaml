@@ -35,4 +35,10 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: \db_changelog\change_sets\add_foundation_date.sql
+  - changeSet:
+      id: 7
+      author: roman.tumaikin
+      changes:
+        - sqlFile:
+            path: \db_changelog\change_sets\add_owner_id.sql
 

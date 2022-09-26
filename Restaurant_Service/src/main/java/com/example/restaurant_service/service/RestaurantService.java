@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface RestaurantService {
 
@@ -19,6 +20,7 @@ public interface RestaurantService {
 
     Restaurant getRestaurant(Long id) throws RestaurantNotFoundException;
     Page<Restaurant> getAllRestaurants(Pageable pageable);
+    List<Restaurant> getRestaurantsByOwnerId(Long id);
 
     LocalDate getFoundationDateById(Long id) throws RestaurantNotFoundException;
 
@@ -31,4 +33,5 @@ public interface RestaurantService {
 
     void deleteRestaurantByName(String name);
 
+    void updateRestaurant(Restaurant restaurantInDto) throws RestaurantNotFoundException;
 }

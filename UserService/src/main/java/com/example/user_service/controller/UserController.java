@@ -12,17 +12,21 @@ import java.util.List;
 
 @RequestMapping("/users")
 public interface UserController {
+
+    @GetMapping("/test")
+    String test();
+
     @PostMapping("/create")
     UserOutDto createUser(@RequestBody UserInDto user) throws UserAlreadyExists;
 
     @PutMapping("/update/{userId}")
-    UserOutDto updateUser(@RequestBody UserInDto user, @PathVariable long userId);
+    UserOutDto updateUser(@RequestBody UserInDto user, @PathVariable Long userId);
 
-    @DeleteMapping("/delete/{userId}")
-    void deleteUser(@PathVariable long userId);
+    @DeleteMapping("/delete/{oldUserId}/{newUserId}")
+    void deleteUser(@PathVariable Long oldUserId,@PathVariable Long newUserId);
 
     @GetMapping("/{userId}")
-    UserOutDto getUserById(@PathVariable long userId);
+    UserOutDto getUserById(@PathVariable Long userId);
 
     @GetMapping("/all")
     List<UserOutDto> getAllUsers();

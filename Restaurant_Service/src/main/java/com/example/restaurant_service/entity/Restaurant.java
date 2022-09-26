@@ -8,8 +8,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "restaurants")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -19,6 +18,9 @@ public class Restaurant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long id;
+
+    @Column(name = "owner_id")
+    private Long ownerId;
 
     @Column
     private String name;
@@ -41,14 +43,4 @@ public class Restaurant {
     @Column
     private LocalDate foundation_date;
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "id = " + id + ", " +
-                "name = " + name + ", " +
-                "description = " + description + ", " +
-                "phone_number = " + phone_number + ", " +
-                "email_address = " + email_address + ", " +
-                "foundation_date = " + foundation_date + ")";
-    }
 }

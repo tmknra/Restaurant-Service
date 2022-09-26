@@ -16,8 +16,8 @@ public class UserOutDto {
     private String patronymic;
     private String email;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    // @JsonFormat(shape = JsonFormat.Shape.STRING)
     // @EqualsAndHashCode.Exclude
-    private LocalDateTime registrationDate;
-    private List<RoleOutDto> role;
+    // private LocalDateTime registrationDate;
+    // private List<RoleOutDto> role;
 }

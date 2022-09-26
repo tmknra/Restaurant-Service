@@ -1,5 +1,7 @@
 package com.example.restaurant_service.controller;
 
+import com.example.restaurant_service.RabbitTest;
+import com.example.restaurant_service.dto.DeleteUserDto;
 import com.example.restaurant_service.dto.in.RestaurantInDto;
 import com.example.restaurant_service.dto.out.RestaurantOutDto;
 import com.example.restaurant_service.entity.Restaurant;
@@ -11,6 +13,7 @@ import com.example.restaurant_service.service.RestaurantService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.i18n.phonenumbers.NumberParseException;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -22,7 +25,9 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/restaurants")
@@ -85,6 +90,8 @@ public class RestaurantController {
     public void updateDescriptionById(@PathVariable Long id, @RequestBody JsonNode description) throws RestaurantNotFoundException {
         restaurantService.updateDescriptionById(id, description.get("description").asText());
     }
+
+
 
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

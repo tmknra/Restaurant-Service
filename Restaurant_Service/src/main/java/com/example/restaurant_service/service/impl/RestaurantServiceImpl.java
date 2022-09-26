@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -88,6 +89,11 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    public List<Restaurant> getRestaurantsByOwnerId(Long id) {
+        return restaurantRepository.findAllByOwnerId(id);
+    }
+
+    @Override
     public LocalDate getFoundationDateById(Long id) throws RestaurantNotFoundException {
         Restaurant restaurantById = getRestaurantById(id);
         return restaurantById.getFoundation_date();
@@ -138,6 +144,13 @@ public class RestaurantServiceImpl implements RestaurantService {
     public void deleteRestaurantByName(String name) {
         Restaurant restaurantByName = restaurantRepository.findByName(name);
         restaurantRepository.delete(restaurantByName);
+    }
+
+    @Override
+    @Transactional
+    public void updateRestaurant(Restaurant restaurant) throws RestaurantNotFoundException {
+        Restaurant restaurant1 = getRestaurant(restaurant.getId());
+        restaurant1.setOwnerId(restaurant.getOwnerId());
     }
 
 

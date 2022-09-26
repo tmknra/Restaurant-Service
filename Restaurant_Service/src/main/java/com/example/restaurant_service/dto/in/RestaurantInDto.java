@@ -22,6 +22,8 @@ public class RestaurantInDto {
     private String name;
     private String description;
 
+    @NotBlank
+    private Long ownerId;
     @PhoneNumberValidation
     private String phone_number;
 

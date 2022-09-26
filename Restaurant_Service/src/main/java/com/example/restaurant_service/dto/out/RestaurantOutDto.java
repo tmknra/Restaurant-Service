@@ -16,6 +16,7 @@ import java.util.List;
 public class RestaurantOutDto {
 
     private Long id;
+    private Long ownerId;
     private String name;
     private String description;
     private String phone_number;
