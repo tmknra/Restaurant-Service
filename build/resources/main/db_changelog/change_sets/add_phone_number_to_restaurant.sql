@@ -1,1 +1,0 @@
-alter table restaurants add phone_number varchar(50);

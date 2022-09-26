@@ -1,1 +1,0 @@
-alter table restaurants add email_address varchar(100);
