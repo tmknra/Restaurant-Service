@@ -22,7 +22,7 @@ dependencies {
 	implementation 'org.liquibase:liquibase-core'
 	testImplementation 'com.h2database:h2:2.1.214'
 
-	implementation 'com.googlecode.libphonenumber:libphonenumber:8.12.54'
+	implementation 'com.googlecode.libphonenumber:libphonenumber:8.12.55'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"

@@ -13,9 +13,6 @@ import java.util.List;
 @RequestMapping("/users")
 public interface UserController {
 
-    @GetMapping("/test")
-    String test();
-
     @PostMapping("/create")
     UserOutDto createUser(@RequestBody UserInDto user) throws UserAlreadyExists;
 

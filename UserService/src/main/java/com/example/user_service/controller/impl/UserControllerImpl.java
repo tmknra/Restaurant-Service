@@ -38,14 +38,7 @@ public class UserControllerImpl implements UserController {
     private UserService userService;
 
     @Override
-    public String test() {
-        // rabbitTemplate.convertAndSend("myQueue", "Hello World!");
-        return "test";
-    }
-
-    @Override
     public UserOutDto createUser(UserInDto user) throws UserAlreadyExists {
-        // System.out.println(user);
         return userService.createUser(user);
     }
 

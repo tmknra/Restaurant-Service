@@ -11,26 +11,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class RabbitTest {
+public class RabbitConfig {
     @Autowired
     private RestaurantService restaurantService;
-    // @RabbitListener(queues = "myQueue")
-    // private String rabbitTest(@Payload String s){
-    //     return "";
-    // }
-    // @RabbitListener(queues = "myQueue")
-    // void rabbitTest(Message message) {
-    //     // return "";
-    //     // Object o = new Jackson2JsonMessageConverter().fromMessage(deleteUserDto);
-    //     // System.out.println(o);
-    //     System.out.println("!!!GOT IT!!! " + message);
-    //     // System.out.println("user: " + user);
-    // }
 
-    // @RabbitListener(queues = "myQueue")
-    // void rabbitTest(DeleteUserDto deleteUserDto) {
-    //     System.out.println("!!!GOT IT!!! " + deleteUserDto);
-    // }
     @RabbitListener(queues = "deleteUserQueue")
     void deleteUserListener(DeleteUserDto deleteUserDto) throws RestaurantNotFoundException {
         List<Restaurant> restaurantsByOwnerId = restaurantService.getRestaurantsByOwnerId(deleteUserDto.getOldUserId());
