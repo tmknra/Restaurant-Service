@@ -13,13 +13,13 @@ import java.util.List;
 @RequestMapping("/users")
 public interface UserController {
 
-    @PostMapping("/create")
+    @PostMapping
     UserOutDto createUser(@RequestBody UserInDto user) throws UserAlreadyExists;
 
-    @PutMapping("/update/{userId}")
+    @PutMapping("/{userId}")
     UserOutDto updateUser(@RequestBody UserInDto user, @PathVariable Long userId);
 
-    @DeleteMapping("/delete/{oldUserId}/{newUserId}")
+    @DeleteMapping("/{oldUserId}/{newUserId}")
     void deleteUser(@PathVariable Long oldUserId,@PathVariable Long newUserId);
 
     @GetMapping("/{userId}")
@@ -28,7 +28,7 @@ public interface UserController {
     @GetMapping("/all")
     List<UserOutDto> getAllUsers();
 
-    @PutMapping("/change_pass")
+    @PutMapping("/pass")
     void changePasswordById(@RequestBody @Valid ChangePasswordInDto body) throws UserNotFoundException;
 
 }
