@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class RabbitConfig {
+public class DeleteUserListener {
     @Autowired
     private RestaurantService restaurantService;
 

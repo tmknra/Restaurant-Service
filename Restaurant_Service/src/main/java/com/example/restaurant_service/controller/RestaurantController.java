@@ -11,6 +11,10 @@ import com.example.restaurant_service.service.RestaurantService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.i18n.phonenumbers.NumberParseException;
+import com.sun.xml.bind.v2.TODO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -28,6 +32,7 @@ import java.util.Map;
 @RequestMapping("/restaurants")
 public class RestaurantController {
 
+    // TODO: put mappers in service
     private final RestaurantMapper restaurantMapper;
     private final RestaurantService restaurantService;
 
@@ -38,66 +43,76 @@ public class RestaurantController {
     }
 
     @GetMapping("/all")
+    @Operation(summary = "Returns all restaurants.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Returns list of restaurants.")})
     public Page<RestaurantOutDto> getAll(Pageable pageable) {
         Page<Restaurant> restaurants = restaurantService.getAllRestaurants(pageable);
         return restaurants.map(restaurantMapper::restaurantToRestaurantOutDto);
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Returns restaurant by id.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Returns restaurant by id."),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Provided restaurant not found.")})
     public RestaurantOutDto getRestaurant(@PathVariable Long id) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantService.getRestaurant(id);
         return restaurantMapper.restaurantToRestaurantOutDto(restaurant);
     }
 
-    @GetMapping("/{id}/founded")
-    public LocalDate getFoundationDate(@PathVariable Long id) throws RestaurantNotFoundException {
-        return restaurantService.getFoundationDateById(id);
-    }
-
     @PostMapping("/new")
+    @Operation(summary = "Creates new user")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "",
+                    description = "")})
     public RestaurantOutDto addNewRestaurant(@RequestBody @Valid RestaurantInDto restaurant) throws NumberParseException, FoundationDateIsExpiredException, PhoneNumberNotRuException {
         Restaurant restaurantEntity = restaurantService.createRestaurant(restaurant);
         return restaurantMapper.restaurantToRestaurantOutDto(restaurantEntity);
     }
 
     @PostMapping("/delete")
+    @Operation(summary = "Creates new user")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "",
+                    description = "")})
+    // TODO: refactor to delete by id
     public void deleteRestaurantByName(@RequestBody JsonNode name) {
         restaurantService.deleteRestaurantByName(name.get("name").asText());
     }
 
-    @PostMapping("/set_email/{id}")
-    public void setEmail(@PathVariable Long id, @RequestBody JsonNode email_address) throws JsonProcessingException, RestaurantNotFoundException {
-        restaurantService.setEmailById(id, email_address.get("email_address").asText());
-    }
-
-    @PostMapping("/set_phone/{id}")
-    public void setPhoneNumber(@PathVariable Long id, @RequestBody JsonNode phone_number) throws NumberParseException, RestaurantNotFoundException, PhoneNumberNotRuException {
-        restaurantService.setPhoneNumberById(id, phone_number.get("phone_number").asText());
-    }
-
-    @PostMapping("/set_foundation_date/{id}")
-    public void setFoundationDate(@PathVariable Long id, @RequestBody JsonNode foundationDate) throws FoundationDateIsExpiredException, RestaurantNotFoundException {
-        LocalDate foundationDateFromJson = LocalDate.parse(foundationDate.get("foundation_date").asText(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        restaurantService.setFoundationDateById(id, foundationDateFromJson);
-    }
 
     @PutMapping("/description/update/{id}")
+    @Operation(summary = "Creates new user")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "",
+                    description = "")})
+    // TODO: refactor to update Restaurant
     public void updateDescriptionById(@PathVariable Long id, @RequestBody JsonNode description) throws RestaurantNotFoundException {
         restaurantService.updateDescriptionById(id, description.get("description").asText());
     }
 
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException exception) {
-        Map<String, String> errors = new HashMap<>();
-        exception.getBindingResult().getAllErrors().forEach(
-                error -> {
-                    String fieldName = ((FieldError) error).getField();
-                    String errorMessage = error.getDefaultMessage();
-                    errors.put(fieldName, errorMessage);
-                }
-        );
-        return errors;
-    }
+    //
+    // @ResponseStatus(HttpStatus.BAD_REQUEST)
+    // @ExceptionHandler(MethodArgumentNotValidException.class)
+    // public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException exception) {
+    //     Map<String, String> errors = new HashMap<>();
+    //     exception.getBindingResult().getAllErrors().forEach(
+    //             error -> {
+    //                 String fieldName = ((FieldError) error).getField();
+    //                 String errorMessage = error.getDefaultMessage();
+    //                 errors.put(fieldName, errorMessage);
+    //             }
+    //     );
+    //     return errors;
+    // }
 }

@@ -1,7 +1,7 @@
 package com.example.user_service.service.impl;
 
-import com.example.user_service.dto.in.ChangePasswordInDto;
 import com.example.user_service.dto.DeleteUserDto;
+import com.example.user_service.dto.in.ChangePasswordInDto;
 import com.example.user_service.dto.in.UserInDto;
 import com.example.user_service.dto.out.UserOutDto;
 import com.example.user_service.entity.UserEntity;
@@ -12,10 +12,8 @@ import com.example.user_service.repository.UserRepository;
 import com.example.user_service.service.UserService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -27,8 +25,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    @Autowired
-    private PasswordEncoder encoder;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
@@ -36,22 +32,12 @@ public class UserServiceImpl implements UserService {
         this.userMapper = userMapper;
     }
 
-
-    @Component
-    public static class DeleteUserListener {
-        @RabbitListener(queues = "myQueue")
-        void deleteUser(DeleteUserDto deleteUserDto) {
-            System.out.println("delete user " + deleteUserDto);
-        }
-    }
-
     @Override
     @Transactional
     public UserOutDto createUser(UserInDto user) throws UserAlreadyExists {
-        if (userRepository.existsByEmail(user.getEmail()))
+        if (userRepository.existsByEmail(user.getEmail())){
             throw new UserAlreadyExists("User already exist!");
-        String password = user.getPassword();
-        user.setPassword(encoder.encode(password));
+        }
         UserEntity save = userRepository.save(userMapper.userInDtoToUserEntity(user));
         return userMapper.userEntityToUserOutDto(save);
     }
@@ -104,9 +90,9 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("User does not exist with email: " + changePasswordInDto.getEmail());
         UserEntity userEntity = byEmail.get();
 
-        if (!encoder.matches(changePasswordInDto.getOldPassword(), userEntity.getPassword()))
+        if (!changePasswordInDto.getOldPassword().matches(userEntity.getPassword()))
             throw new RuntimeException("Invalid old password!");
-        userEntity.setPassword(encoder.encode(changePasswordInDto.getNewPassword()));
+        userEntity.setPassword(changePasswordInDto.getNewPassword());
     }
 
     private UserEntity findUserById(long userId) throws UserNotFoundException {

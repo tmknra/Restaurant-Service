@@ -10,22 +10,4 @@ databaseChangeLog:
       author: roman.tumaikin
       changes:
         - sqlFile:
-            path: db\changelog\change_sets\create_users_roles.sql
-  - changeSet:
-      id: 3
-      author: roman.tumaikin
-      changes:
-        - sqlFile:
-            path: db\changelog\change_sets\link_users_with_roles.sql
-  - changeSet:
-      id: 4
-      author: roman.tumaikin
-      changes:
-        - sqlFile:
-            path: db\changelog\change_sets\fullfill_user_roles.sql
-  - changeSet:
-      id: 5
-      author: roman.tumaikin
-      changes:
-        - sqlFile:
             path: db\changelog\change_sets\add_password_to_user.sql

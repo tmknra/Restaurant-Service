@@ -1,13 +1,16 @@
 package com.example.user_service.dto.out;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-@Data
 @Builder
+@Data
+@Schema(description = "DTO to visualise user from database")
 public class UserOutDto {
 
     private Long id;
@@ -16,8 +19,8 @@ public class UserOutDto {
     private String patronymic;
     private String email;
 
-    // @JsonFormat(shape = JsonFormat.Shape.STRING)
-    // @EqualsAndHashCode.Exclude
-    // private LocalDateTime registrationDate;
-    // private List<RoleOutDto> role;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @EqualsAndHashCode.Exclude
+    @Schema(description = "Default value - current time when register new user")
+    private LocalDateTime registrationDate;
 }

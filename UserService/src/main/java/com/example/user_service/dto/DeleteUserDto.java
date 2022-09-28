@@ -1,16 +1,14 @@
 package com.example.user_service.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageProperties;
-
-import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "DTO to change deleted user from restaurant_service to new user by rabbit messaging")
 public class DeleteUserDto {
 
     private Long oldUserId;

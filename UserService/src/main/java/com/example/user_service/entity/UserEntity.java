@@ -1,13 +1,12 @@
 package com.example.user_service.entity;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -22,33 +21,32 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
+    @Schema(description = "User id. Autoincrement in database.")
     private Long id;
 
     @Column
+    @Schema(description = "User's lastname.")
     private String lastname;
 
     @Column
+    @Schema(description = "User's firstname.")
     private String name;
 
     @Column
+    @Schema(description = "User's patronymic.")
     private String patronymic;
 
     @Column
+    @Schema(description = "User's email. Unique value.")
     private String email;
 
     @Column(name = "registration_date")
     @CreationTimestamp
+    @Schema(description = "Creation timestamp.")
     private LocalDateTime registrationDate;
 
     @Column
     private String password;
-
-    @ManyToMany(
-            mappedBy = "user",
-            fetch= FetchType.EAGER,
-            cascade = CascadeType.PERSIST
-    )
-    private List<RoleEntity> role;
 
     @PrePersist
     public void saveDefaultPass(){
