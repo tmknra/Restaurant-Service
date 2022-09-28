@@ -1,6 +1,7 @@
 package com.example.restaurant_service.service.impl;
 
 import com.example.restaurant_service.dto.in.RestaurantInDto;
+import com.example.restaurant_service.dto.out.RestaurantOutDto;
 import com.example.restaurant_service.entity.Restaurant;
 import com.example.restaurant_service.exception.entity.FoundationDateIsExpiredException;
 import com.example.restaurant_service.exception.entity.PhoneNumberNotRuException;
@@ -34,58 +35,25 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public long createRestaurantByName(String name) {
-        Restaurant restaurant = new Restaurant();
-        restaurant.setName(name);
-        Restaurant save = restaurantRepository.save(restaurant);
-        return save.getId();
+    public RestaurantOutDto createRestaurant(RestaurantInDto restaurant) throws NumberParseException, FoundationDateIsExpiredException, PhoneNumberNotRuException {
+        Restaurant restaurantEntity = restaurantMapper.restaurantInDtoToRestaurant(restaurant);
+        if (restaurantEntity.getPhone_number() != null && restaurantEntity.getPhone_number().length() != 0)
+            restaurantEntity.setPhone_number(Util.reformatRuTelephone(restaurant.getPhone_number()));
+        if (restaurant.getFoundation_date() != null)
+            Util.validateFoundationDate(restaurant.getName(), restaurant.getFoundation_date());
+
+        return restaurantMapper.restaurantToRestaurantOutDto(restaurantRepository.save(restaurantEntity));
     }
 
     @Override
-    public long createRestaurantByNameAndDate(String name, LocalDate foundationDate) throws FoundationDateIsExpiredException {
-        if (foundationDate == null || LocalDate.now().isBefore(foundationDate)) {
-            throw new FoundationDateIsExpiredException(name, foundationDate);
-        }
-        Restaurant restaurant = new Restaurant();
-        restaurant.setName(name);
-        restaurant.setFoundation_date(foundationDate);
-        Restaurant save = restaurantRepository.save(restaurant);
-        return save.getId();
+    public RestaurantOutDto getRestaurant(Long id) throws RestaurantNotFoundException {
+        return restaurantMapper.restaurantToRestaurantOutDto(getRestaurantById(id));
     }
 
     @Override
-    public long createRestaurantByNameAndPhoneNumber(String name, String phoneNumber) throws NumberParseException, PhoneNumberNotRuException {
-        Restaurant restaurant = new Restaurant();
-        restaurant.setName(name);
-        String reformatRuTelephone = Util.reformatRuTelephone(phoneNumber);
-        restaurant.setPhone_number(reformatRuTelephone);
-        Restaurant save = restaurantRepository.save(restaurant);
-        return save.getId();
-    }
-
-    @Override
-    public Restaurant getRestaurant(Long id) throws RestaurantNotFoundException {
-        return getRestaurantById(id);
-    }
-
-    @Override
-    public Page<Restaurant> getAllRestaurants(Pageable pageable) {
-        return restaurantRepository.findAll(pageable);
-        // List<Restaurant> all = restaurantRepository.findAll();
-        // List<RestaurantOutDto> outDtos = new ArrayList<>();
-        // for (Restaurant restaurant : all) {
-        //     outDtos.add(
-        //             RestaurantOutDto.builder()
-        //                     .id(restaurant.getId())
-        //                     .name(restaurant.getName())
-        //                     .description(restaurant.getDescription())
-        //                     .phone_number(restaurant.getPhone_number())
-        //                     .email_address(restaurant.getEmail_address())
-        //                     .foundation_date(restaurant.getFoundation_date())
-        //                     .build()
-        //     );
-        // }
-        // return outDtos;
+    public Page<RestaurantOutDto> getAllRestaurants(Pageable pageable) {
+        return restaurantRepository.findAll(pageable)
+                .map(restaurantMapper::restaurantToRestaurantOutDto);
     }
 
     @Override
@@ -94,65 +62,32 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public LocalDate getFoundationDateById(Long id) throws RestaurantNotFoundException {
-        Restaurant restaurantById = getRestaurantById(id);
-        return restaurantById.getFoundation_date();
-    }
-
-    @Override
-    public Restaurant createRestaurant(RestaurantInDto restaurant) throws NumberParseException, FoundationDateIsExpiredException, PhoneNumberNotRuException {
-        Restaurant restaurantEntity = restaurantMapper.restaurantInDtoToRestaurant(restaurant);
-        if (restaurantEntity.getPhone_number() != null && restaurantEntity.getPhone_number().length() != 0)
-            restaurantEntity.setPhone_number(Util.reformatRuTelephone(restaurant.getPhone_number()));
-        if (restaurant.getFoundation_date() != null)
-            Util.validateFoundationDate(restaurant.getName(), restaurant.getFoundation_date());
-        return restaurantRepository.save(restaurantEntity);
-    }
-
-    @Override
     @Transactional
-    public void updateDescriptionById(Long id, String newDescription) throws RestaurantNotFoundException {
-        getRestaurant(id).setDescription(newDescription);
+    public void updateRestaurant(RestaurantInDto restaurantInDto, Long id) throws RestaurantNotFoundException {
+        Restaurant restaurant = getRestaurantById(id);
+        if (restaurantInDto.getName() != null)
+            restaurant.setName(restaurantInDto.getName());
+
+        if (restaurantInDto.getDescription() != null)
+            restaurant.setDescription(restaurantInDto.getDescription());
+
+        if (restaurantInDto.getFoundation_date() != null)
+            restaurant.setFoundation_date(restaurantInDto.getFoundation_date());
+
+        if (restaurantInDto.getPhone_number() != null)
+            restaurant.setPhone_number(restaurantInDto.getPhone_number());
+
+        if (restaurantInDto.getEmail_address() != null)
+            restaurant.setEmail_address(restaurantInDto.getEmail_address());
+
+        if (restaurantInDto.getOwnerId() != null)
+            restaurant.setOwnerId(restaurantInDto.getOwnerId());
     }
 
-    @Override
-    public void setEmailById(Long id, String email) throws RestaurantNotFoundException {
-        Restaurant restaurant = getRestaurant(id);
-        if (Util.validateEmailAddress(email))
-            restaurant.setEmail_address(email);
-        restaurantRepository.save(restaurant);
-    }
-
-    @Override
-    public void setPhoneNumberById(Long id, String number) throws NumberParseException, RestaurantNotFoundException, PhoneNumberNotRuException {
-        Restaurant restaurant = getRestaurant(id);
-        String reformattedTelephone = Util.reformatRuTelephone(number);
-        restaurant.setPhone_number(reformattedTelephone);
-        restaurantRepository.save(restaurant);
-    }
-
-    @Override
-    public void setFoundationDateById(Long id, LocalDate date) throws FoundationDateIsExpiredException, RestaurantNotFoundException {
-        Restaurant restaurant = getRestaurant(id);
-        Util.validateFoundationDate(restaurant.getName(), date);
-        restaurant.setFoundation_date(date);
-        restaurantRepository.save(restaurant);
-    }
-
-    @Override
     @Transactional
-    public void deleteRestaurantByName(String name) {
-        Restaurant restaurantByName = restaurantRepository.findByName(name);
-        restaurantRepository.delete(restaurantByName);
+    public void deleteRestaurantById(Long id) throws RestaurantNotFoundException {
+        restaurantRepository.delete(getRestaurantById(id));
     }
-
-    @Override
-    @Transactional
-    public void updateRestaurant(Restaurant restaurant) throws RestaurantNotFoundException {
-        Restaurant restaurant1 = getRestaurant(restaurant.getId());
-        restaurant1.setOwnerId(restaurant.getOwnerId());
-    }
-
 
     private Restaurant getRestaurantById(Long id) throws RestaurantNotFoundException {
         Optional<Restaurant> byId = restaurantRepository.findById(id);

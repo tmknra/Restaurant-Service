@@ -1,6 +1,7 @@
 package com.example.restaurant_service;
 
 import com.example.restaurant_service.dto.DeleteUserDto;
+import com.example.restaurant_service.dto.in.RestaurantInDto;
 import com.example.restaurant_service.entity.Restaurant;
 import com.example.restaurant_service.exception.entity.RestaurantNotFoundException;
 import com.example.restaurant_service.service.RestaurantService;
@@ -19,6 +20,10 @@ public class DeleteUserListener {
     void deleteUserListener(DeleteUserDto deleteUserDto) throws RestaurantNotFoundException {
         List<Restaurant> restaurantsByOwnerId = restaurantService.getRestaurantsByOwnerId(deleteUserDto.getOldUserId());
         Restaurant restaurant = restaurantsByOwnerId.get(0);
-        restaurantService.updateRestaurant(Restaurant.builder().id(restaurantsByOwnerId.get(0).getId()).ownerId(deleteUserDto.getNewUserId()).build());
+        restaurantService.updateRestaurant(
+                RestaurantInDto.builder()
+                        .ownerId(deleteUserDto.getNewUserId())
+                        .build(),
+                restaurant.getId());
     }
 }

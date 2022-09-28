@@ -1,23 +1,23 @@
 package com.example.restaurant_service.service;
 
 import com.example.restaurant_service.dto.out.FeedbackOutDto;
-import com.example.restaurant_service.entity.Feedback;
+import com.example.restaurant_service.exception.entity.FeedbackNotFoundException;
 import com.example.restaurant_service.exception.entity.RestaurantNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface FeedbackService {
 
-    Feedback getFeedback(Long id);
+    FeedbackOutDto getFeedback(Long id) throws FeedbackNotFoundException;
 
-    Page<Feedback> getAllByRestaurantId(Pageable pageable, Long restaurantId);
+    Page<FeedbackOutDto> getAllByRestaurantId(Pageable pageable, Long restaurantId);
     Double getAverageRatingByRestaurantID(Long restaurantID);
-    String getFeedbackTextByID(Long id);
+    // String getFeedbackTextByID(Long id) throws FeedbackNotFoundException;
 
     FeedbackOutDto addNewFeedback(Long restaurantId, String feedback, Integer rating) throws RestaurantNotFoundException;
-    Feedback changeFeedbackByID(Long feedbackID, String newFeedback, Integer newRating);
+    FeedbackOutDto updateFeedbackById(Long feedbackID, String newFeedback, Integer newRating);
 
     void deleteFeedbackById(Long id);
-    void deleteAllByRestaurantId(Long restaurantId);
+    // void deleteAllByRestaurantId(Long restaurantId);
 
 }

@@ -3,6 +3,7 @@ package com.example.restaurant_service.dto.in;
 import com.example.restaurant_service.validation.constraint.EmailValidation;
 import com.example.restaurant_service.validation.constraint.PhoneNumberValidation;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,14 +17,20 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
+@Schema(description = "DTO to create/update restaurant")
 public class RestaurantInDto {
 
     @NotBlank(message = "Can not be empty.")
+    @Schema(description = "Restaurant name. Can be not unique.")
     private String name;
+
+    @Schema(description = "Text description.")
     private String description;
 
     @NotBlank
+    @Schema(description = "Owners id from user repository, can be null.")
     private Long ownerId;
+
     @PhoneNumberValidation
     private String phone_number;
 
@@ -32,6 +39,7 @@ public class RestaurantInDto {
     private String email_address;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Schema(description = "Opening date. Cannot be more than the current date.")
     private final LocalDate foundation_date;
 
 }

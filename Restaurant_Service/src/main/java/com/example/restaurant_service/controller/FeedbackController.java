@@ -2,88 +2,105 @@ package com.example.restaurant_service.controller;
 
 import com.example.restaurant_service.dto.in.FeedbackInDto;
 import com.example.restaurant_service.dto.out.FeedbackOutDto;
-import com.example.restaurant_service.entity.Feedback;
+import com.example.restaurant_service.exception.entity.FeedbackNotFoundException;
 import com.example.restaurant_service.exception.entity.RestaurantNotFoundException;
-import com.example.restaurant_service.mapper.FeedbackMapper;
 import com.example.restaurant_service.service.FeedbackService;
-import com.fasterxml.jackson.databind.JsonNode;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/feedbacks")
 public class FeedbackController {
 
     private final FeedbackService feedbackService;
-    private final FeedbackMapper feedbackMapper;
 
     @Autowired
-    public FeedbackController(FeedbackService feedbackService, FeedbackMapper feedbackMapper) {
+    public FeedbackController(FeedbackService feedbackService) {
         this.feedbackService = feedbackService;
-        this.feedbackMapper = feedbackMapper;
     }
 
-    @GetMapping("/get/{id}")
-    public FeedbackOutDto getFeedbackById(@PathVariable Long id){
-        Feedback feedback = feedbackService.getFeedback(id);
-        return feedbackMapper.feedbackToFeedbackOutDto(feedback);
-    }
-
-    @GetMapping("/all/{restID}")
-    public Page<FeedbackOutDto> getFeedbacks(Pageable pageable, @PathVariable Long restID){
-        return feedbackService.getAllByRestaurantId(pageable, restID).map(feedbackMapper::feedbackToFeedbackOutDto);
-    }
-
-    @GetMapping("/get_rating/{id}")
-    public Double getAverageRatingByRestaurantID(@PathVariable Long id){
-       return feedbackService.getAverageRatingByRestaurantID(id);
+    @PostMapping
+    @Operation(summary = "Creates new feedback by restaurant id")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "New feedback successfully created."),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Provided restaurant id not found.")})
+    public FeedbackOutDto addFeedbackByRestaurantID(@RequestBody @Valid FeedbackInDto feedback) throws RestaurantNotFoundException {
+        return feedbackService.addNewFeedback(feedback.getRestaurantId(), feedback.getFeedback(), feedback.getRating());
     }
 
     @GetMapping("/{id}")
-    public String getFeedbackTextByID(@PathVariable Long id){
-        return feedbackService.getFeedbackTextByID(id);
+    @Operation(summary = "Returns feedback by id")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Returns feedback."),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Provided feedback not found.")})
+    public FeedbackOutDto getFeedbackById(@PathVariable Long id) throws FeedbackNotFoundException {
+        return feedbackService.getFeedback(id);
     }
 
-    @PostMapping("/new")
-    public FeedbackOutDto addFeedbackByRestaurantID(@RequestBody @Valid FeedbackInDto feedback) throws RestaurantNotFoundException {
-        return feedbackService.addNewFeedback(feedback.getRestaurantid(), feedback.getFeedback(), feedback.getRating());
+    @GetMapping("/all/{restID}")
+    @Operation(summary = "Returns feedback list by restaurant id")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Returns feedback list."),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Provided restaurant id not found.")})
+    public Page<FeedbackOutDto> getFeedbacks(Pageable pageable, @PathVariable Long restID) {
+        return feedbackService.getAllByRestaurantId(pageable, restID);
     }
 
-    @PostMapping("/change_feedback/{id}")
-    public Feedback changeFeedbackByID(@PathVariable Long id, @RequestBody @Valid FeedbackInDto feedback){
-        return feedbackService.changeFeedbackByID(id, feedback.getFeedback(), feedback.getRating());
+    @GetMapping("/get_rating/{id}")
+    @Operation(summary = "Returns average restaurant rating.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Returns rating."),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Provided restaurant id not found.")})
+    public Double getAverageRatingByRestaurantID(@PathVariable Long id) {
+        return feedbackService.getAverageRatingByRestaurantID(id);
     }
 
-    @PostMapping("/delete")
-    public void deleteFeedbackById(@RequestBody JsonNode id){
-        feedbackService.deleteFeedbackById(id.get("id").asLong());
+    @PutMapping("/update/{id}")
+    @Operation(summary = "Updates provided feedback")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Feedback successfully updated."),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Provided feedback not found.")})
+    public FeedbackOutDto updateFeedbackById(@PathVariable Long id, @RequestBody @Valid FeedbackInDto feedback) {
+        return feedbackService.updateFeedbackById(id, feedback.getFeedback(), feedback.getRating());
     }
 
-    @PostMapping("/deleteAll/{restaurantId}")
-    public void deleteAllByRestaurantId(@PathVariable Long restaurantId){
-        feedbackService.deleteAllByRestaurantId(restaurantId);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException exception){
-        Map<String, String> errors = new HashMap<>();
-        exception.getBindingResult().getAllErrors().forEach(
-                error -> {
-                    String fieldName = ((FieldError) error).getField();
-                    String errorMessage = error.getDefaultMessage();
-                    errors.put(fieldName, errorMessage);
-                }
-        );
-        return errors;
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Creates new restaurant")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Feedback successfully updated."),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Provided feedback not found.")})
+    public void deleteFeedbackById(@PathVariable Long id) {
+        feedbackService.deleteFeedbackById(id);
     }
 }

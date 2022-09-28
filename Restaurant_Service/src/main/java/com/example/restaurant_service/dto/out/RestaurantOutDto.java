@@ -1,6 +1,7 @@
 package com.example.restaurant_service.dto.out;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode
+@Schema(description = "DTO to represent restaurant from database")
 public class RestaurantOutDto {
 
     private Long id;

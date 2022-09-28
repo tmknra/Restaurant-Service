@@ -3,6 +3,7 @@ package com.example.restaurant_service.service.impl;
 import com.example.restaurant_service.dto.out.FeedbackOutDto;
 import com.example.restaurant_service.entity.Feedback;
 import com.example.restaurant_service.entity.Restaurant;
+import com.example.restaurant_service.exception.entity.FeedbackNotFoundException;
 import com.example.restaurant_service.exception.entity.RestaurantNotFoundException;
 import com.example.restaurant_service.mapper.FeedbackMapper;
 import com.example.restaurant_service.repository.FeedbackRepository;
@@ -31,31 +32,6 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public Feedback getFeedback(Long id) {
-        return getFeedbackById(id);
-    }
-
-    @Override
-    public Page<Feedback> getAllByRestaurantId(Pageable pageable, Long restaurantId) {
-        // feedbackRepository.findAllByRestaurantId(pageable);
-        // feedbackRepository.findAll(pageable);
-        return feedbackRepository.findAllByRestaurantId(pageable, restaurantId);
-        // return feedbackRepository.findAllByRestaurantId(pageable, restaurantId)
-        //         .stream().map(feedbackMapper::feedbackToFeedbackOutDto)
-        //         .collect(Collectors.toList());
-    }
-
-    @Override
-    public Double getAverageRatingByRestaurantID(Long restaurantID) {
-        return feedbackRepository.findAverageRatingByRestaurantid(restaurantID);
-    }
-
-    @Override
-    public String getFeedbackTextByID(Long id) {
-        return getFeedbackById(id).getFeedback();
-    }
-
-    @Override
     public FeedbackOutDto addNewFeedback(Long restaurantId, String feedback, Integer rating) throws RestaurantNotFoundException {
         Optional<Restaurant> byId = restaurantRepository.findById(restaurantId);
         if (byId.isEmpty())
@@ -66,26 +42,44 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
+    public FeedbackOutDto getFeedback(Long id) throws FeedbackNotFoundException {
+        return feedbackMapper.feedbackToFeedbackOutDto(getFeedbackById(id));
+    }
+
+    @Override
+    public Page<FeedbackOutDto> getAllByRestaurantId(Pageable pageable, Long restaurantId) {
+        return feedbackRepository.findAllByRestaurantId(pageable, restaurantId).map(feedbackMapper::feedbackToFeedbackOutDto);
+    }
+
+    @Override
+    public Double getAverageRatingByRestaurantID(Long restaurantID) {
+        return feedbackRepository.findAverageRatingByRestaurantid(restaurantID);
+    }
+
+    @Override
     @Transactional
-    public Feedback changeFeedbackByID(Long feedbackID, String newFeedback, Integer newRating) {
+    public FeedbackOutDto updateFeedbackById(Long feedbackID, String newFeedback, Integer newRating) {
         Feedback feedback = feedbackRepository.findById(feedbackID).get();
         feedback.setFeedback(newFeedback);
         feedback.setRating(newRating);
-        return feedbackRepository.save(feedback);
+        return feedbackMapper.feedbackToFeedbackOutDto(feedback);
     }
 
     @Override
     public void deleteFeedbackById(Long id) {
         feedbackRepository.deleteById(id);
     }
+    //
+    // @Override
+    // public void deleteAllByRestaurantId(Long restaurantId) {
+    //     feedbackRepository.deleteAll(feedbackRepository.findAllByRestaurantId(restaurantId));
+    // }
 
-    @Override
-    public void deleteAllByRestaurantId(Long restaurantId) {
-        feedbackRepository.deleteAll(feedbackRepository.findAllByRestaurantId(restaurantId));
-    }
-
-    private Feedback getFeedbackById(Long id) {
+    private Feedback getFeedbackById(Long id) throws FeedbackNotFoundException {
         Optional<Feedback> byId = feedbackRepository.findById(id);
+        if (byId.isEmpty()){
+            throw new FeedbackNotFoundException("Feedback not found.");
+        }
         return byId.get();
     }
 }
