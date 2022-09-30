@@ -45,6 +45,7 @@ public class UserEntity {
     @Schema(description = "Creation timestamp.")
     private LocalDateTime registrationDate;
 
+    // TODO: delete pass
     @Column
     private String password;
 

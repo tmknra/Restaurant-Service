@@ -2,11 +2,11 @@
 create table if not exists feedbacks
 (
     id            serial primary key,
-    restaurantid  int not null references restaurants (id) on delete cascade,
+    restaurant_id  int not null references restaurants (id) on delete cascade,
     feedback      varchar(255),
     rating        int not null check (rating <= 5 and rating > 0)
 );
-insert into feedbacks (restaurantid, feedback, rating)
+insert into feedbacks (restaurant_id, feedback, rating)
 values (1, 'best of the best', 5),
        (1, 'may be hotter', 4),
        (2, 'fried chicken heaven', 4),

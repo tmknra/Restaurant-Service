@@ -1,6 +1,7 @@
 package com.example.user_service.service.impl;
 
-import com.example.user_service.dto.DeleteUserDto;
+import com.example.user_service.dto.DeleteRestaurantOwnerDto;
+import com.example.user_service.dto.UpdateRestaurantOwnerDto;
 import com.example.user_service.dto.in.ChangePasswordInDto;
 import com.example.user_service.dto.in.UserInDto;
 import com.example.user_service.dto.out.UserOutDto;
@@ -10,13 +11,13 @@ import com.example.user_service.exception.UserNotFoundException;
 import com.example.user_service.mapper.UserMapper;
 import com.example.user_service.repository.UserRepository;
 import com.example.user_service.service.UserService;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,17 +26,18 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final RabbitTemplate rabbitTemplate;
 
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RabbitTemplate rabbitTemplate) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
     @Transactional
     public UserOutDto createUser(UserInDto user) throws UserAlreadyExists {
-        if (userRepository.existsByEmail(user.getEmail())){
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserAlreadyExists("User already exist!");
         }
         UserEntity save = userRepository.save(userMapper.userInDtoToUserEntity(user));
@@ -62,12 +64,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(long userId) throws UserNotFoundException {
+    public ResponseEntity<?> deleteUser(Long userId) throws UserNotFoundException {
         userRepository.delete(findUserById(userId));
+        rabbitTemplate.convertAndSend("deleteOwnerQueue", new DeleteRestaurantOwnerDto(userId));
+        HashMap<String, String> message = new HashMap<>();
+        return ResponseEntity.ok(message);
     }
 
     @Override
-    public UserOutDto getUserById(long id) throws UserNotFoundException {
+    public UserOutDto getUserById(Long id) throws UserNotFoundException {
         UserEntity userById = findUserById(id);
         return userMapper.userEntityToUserOutDto(userById);
     }
@@ -84,7 +89,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void changePasswordById(ChangePasswordInDto changePasswordInDto) throws UserNotFoundException {
+    public ResponseEntity<?> changePasswordById(ChangePasswordInDto changePasswordInDto) throws UserNotFoundException {
         Optional<UserEntity> byEmail = userRepository.findByEmail(changePasswordInDto.getEmail());
         if (byEmail.isEmpty())
             throw new UserNotFoundException("User does not exist with email: " + changePasswordInDto.getEmail());
@@ -93,12 +98,25 @@ public class UserServiceImpl implements UserService {
         if (!changePasswordInDto.getOldPassword().matches(userEntity.getPassword()))
             throw new RuntimeException("Invalid old password!");
         userEntity.setPassword(changePasswordInDto.getNewPassword());
+        HashMap<String, String> message = new HashMap<>();
+        message.put("message", "Password successfully changed");
+        return ResponseEntity.ok(message);
+    }
+
+    @Override
+    public ResponseEntity<?> updateUserToRestaurant(UpdateRestaurantOwnerDto updateRestaurantOwnerDto) throws UserNotFoundException {
+        findUserById(updateRestaurantOwnerDto.getOldUserId());
+        findUserById(updateRestaurantOwnerDto.getNewUserId());
+        rabbitTemplate.convertAndSend("updateOwnerQueue", updateRestaurantOwnerDto);
+        HashMap<String, Long> message = new HashMap<>();
+        message.put("newOwner", updateRestaurantOwnerDto.getNewUserId());
+        return ResponseEntity.ok(message);
     }
 
     private UserEntity findUserById(long userId) throws UserNotFoundException {
         Optional<UserEntity> byId = userRepository.findById(userId);
         if (byId.isEmpty())
-            throw new UserNotFoundException("User does not exist!");
+            throw new UserNotFoundException(String.format("User id %d does not exist!", userId));
         return byId.get();
     }
 }

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "DTO to change deleted user from restaurant_service to new user by rabbit messaging")
-public class DeleteUserDto {
+public class UpdateRestaurantOwnerDto {
 
     private Long oldUserId;
     private Long newUserId;

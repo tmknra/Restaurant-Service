@@ -1,19 +1,18 @@
 package com.example.user_service.controller.impl;
 
 import com.example.user_service.controller.UserController;
-import com.example.user_service.dto.DeleteUserDto;
+import com.example.user_service.dto.UpdateRestaurantOwnerDto;
 import com.example.user_service.dto.in.ChangePasswordInDto;
 import com.example.user_service.dto.in.UserInDto;
 import com.example.user_service.dto.out.UserOutDto;
 import com.example.user_service.exception.UserAlreadyExists;
 import com.example.user_service.exception.UserNotFoundException;
 import com.example.user_service.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.SneakyThrows;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -21,17 +20,10 @@ import java.util.List;
 @RestController
 public class UserControllerImpl implements UserController {
 
-    private final RabbitTemplate rabbitTemplate;
-
-    public UserControllerImpl(RabbitTemplate rabbitTemplate) {
-        this.rabbitTemplate = rabbitTemplate;
-    }
-
     @Autowired
     private UserService userService;
 
     @Override
-    @Operation(summary = "Creates new user")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -45,7 +37,6 @@ public class UserControllerImpl implements UserController {
 
     @SneakyThrows
     @Override
-    @Operation(summary = "Updates user by id")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -59,7 +50,6 @@ public class UserControllerImpl implements UserController {
 
     @SneakyThrows
     @Override
-    @Operation(summary = "Delete user by id.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -67,17 +57,12 @@ public class UserControllerImpl implements UserController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Provided user not found.")})
-    public void deleteUser(Long oldUserId, Long newUserId) {
-        if (getUserById(newUserId) == null) {
-            newUserId = null;
-        }
-        rabbitTemplate.convertAndSend("deleteUserQueue", new DeleteUserDto(oldUserId, newUserId));
-        userService.deleteUser(oldUserId);
+    public ResponseEntity<?> deleteUser(Long id) {
+        return userService.deleteUser(id);
     }
 
     @SneakyThrows
     @Override
-    @Operation(summary = "Get user by id")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -90,7 +75,6 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    @Operation(summary = "Return all users")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -100,7 +84,6 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    @Operation(summary = "Changing user password")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -108,8 +91,13 @@ public class UserControllerImpl implements UserController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Provided user not found.")})
-    public void changePasswordById(ChangePasswordInDto body) throws UserNotFoundException {
-        userService.changePasswordById(body);
+    public ResponseEntity<?> changePasswordById(ChangePasswordInDto body) throws UserNotFoundException {
+        return userService.changePasswordById(body);
+    }
+
+    @Override
+    public ResponseEntity<?> updateRestaurantOwner(UpdateRestaurantOwnerDto updateRestaurantOwnerDto) throws UserNotFoundException {
+        return ResponseEntity.ok(userService.updateUserToRestaurant(updateRestaurantOwnerDto));
     }
 
 }

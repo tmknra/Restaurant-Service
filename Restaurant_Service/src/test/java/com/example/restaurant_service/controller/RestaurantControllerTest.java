@@ -1,100 +1,42 @@
 package com.example.restaurant_service.controller;
 
-import com.example.restaurant_service.RestaurantServiceAppTests;
-import com.example.restaurant_service.dto.in.RestaurantInDto;
-import com.example.restaurant_service.dto.out.RestaurantOutDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.junit.jupiter.api.TestInstance;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.*;
 
-@AutoConfigureMockMvc
-public class RestaurantControllerTest extends RestaurantServiceAppTests {
-
-    @Autowired
-    private MockMvc mockMvc;
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class RestaurantControllerTest {
 
     @Test
-    void addNewRestaurant() throws Exception {
-        RestaurantInDto restaurantInDto = RestaurantInDto.builder()
-                .name("testName")
-                .description("testDescription")
-                .phone_number("+79128761212")
-                .email_address("asdasd@asd.qw")
-                .build();
+    void createRestaurant() {
+    }
 
-        RestaurantInDto emptyNameInDTO = RestaurantInDto.builder()
-                .name("")
-                .build();
+    @Test
+    void getRestaurantById() {
+    }
 
-        RestaurantInDto incorrectPhoneInDTO_1 = RestaurantInDto.builder()
-                .phone_number("trghasd")
-                .build();
+    @Test
+    void getAllRestaurants() {
+    }
 
-        RestaurantInDto incorrectPhoneInDTO_2 = RestaurantInDto.builder()
-                .phone_number("+79123871  ")
-                .build();
+    @Test
+    void getSmallList() {
+    }
 
-        RestaurantInDto incorrectEmailInDTO = RestaurantInDto.builder()
-                .name("test")
-                .email_address("asdasd")
-                .build();
+    @Test
+    void updateRestaurantById() {
+    }
 
-        RestaurantOutDto restaurantOutDto = RestaurantOutDto.builder()
-                .id(4L)
-                .name("testName")
-                .description("testDescription")
-                .phone_number("+79128761212")
-                .email_address("asdasd@asd.qw")
-                .build();
+    @Test
+    void deleteRestaurantById() {
+    }
 
-        ObjectMapper objectMapper = new JsonMapper();
-        String afterSaveRestaurant = objectMapper.writeValueAsString(restaurantOutDto);
+    @Test
+    void getFeedbacksByRestaurantId() {
+    }
 
-        this.mockMvc.perform(
-                        MockMvcRequestBuilders.post("/restaurants/new")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(restaurantInDto)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(afterSaveRestaurant));
-
-        this.mockMvc.perform(
-                        MockMvcRequestBuilders.post("/restaurants/new")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(emptyNameInDTO)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().is4xxClientError());
-
-        this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/restaurants/new")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(incorrectPhoneInDTO_1)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().is4xxClientError());
-
-        this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/restaurants/new")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(incorrectPhoneInDTO_2)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().is4xxClientError());
-
-        this.mockMvc.perform(
-                MockMvcRequestBuilders.post("/restaurants/new")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(incorrectEmailInDTO)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().is4xxClientError());
+    @Test
+    void getAverageRatingByRestaurantId() {
     }
 }

@@ -11,6 +11,7 @@ import lombok.Getter;
 public class FeedbackOutDto {
 
     private Long id;
+    private Long restaurantId;
     private String feedback;
     private Integer rating;
 

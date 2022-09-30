@@ -17,9 +17,9 @@ public class Feedback {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurantid", nullable = false)
+    @JoinColumn(name = "restaurant_id", nullable = false)
     @ToString.Exclude
-    private Restaurant restaurant;
+    private Restaurant restaurantId;
 
     @Basic
     @Column
@@ -28,8 +28,8 @@ public class Feedback {
     @Column
     private Integer rating;
 
-    public Feedback(Restaurant restaurant, String feedback, Integer rating) {
-        this.restaurant = restaurant;
+    public Feedback(Restaurant restaurantId, String feedback, Integer rating) {
+        this.restaurantId = restaurantId;
         this.feedback = feedback;
         this.rating = rating;
     }

@@ -8,10 +8,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "DTO to update owner when current was deleted from users repository")
-public class DeleteUserDto {
+@Schema(description = "DTO to change deleted user from restaurant_service to new user by rabbit messaging")
+public class UpdateRestaurantOwnerDto {
 
     private Long oldUserId;
     private Long newUserId;
 
 }
+

@@ -13,8 +13,6 @@ import javax.validation.constraints.Min;
 @Schema(description = "Dto to create/update feedback")
 public class FeedbackInDto {
 
-    @Schema(description = "Needs if feedback not exists")
-    private Long id;
     @Min(1)
     @Schema(description = "Cannot be 0." +
             "Provided restaurant should be exist")

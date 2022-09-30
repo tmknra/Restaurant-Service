@@ -1,11 +1,9 @@
 package com.example.restaurant_service.exception.handler;
 
-import com.example.restaurant_service.exception.entity.FeedbackNotFoundException;
-import com.example.restaurant_service.exception.entity.FoundationDateIsExpiredException;
-import com.example.restaurant_service.exception.entity.PhoneNumberNotRuException;
-import com.example.restaurant_service.exception.entity.RestaurantNotFoundException;
+import com.example.restaurant_service.exception.entity.*;
 import com.google.i18n.phonenumbers.NumberParseException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -15,7 +13,7 @@ import java.util.HashMap;
 import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
-public class RestaurantControllerExceptionHandler extends ResponseEntityExceptionHandler {
+public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value
             = {
@@ -23,13 +21,18 @@ public class RestaurantControllerExceptionHandler extends ResponseEntityExceptio
             PhoneNumberNotRuException.class,
             RestaurantNotFoundException.class,
             FoundationDateIsExpiredException.class,
-            FeedbackNotFoundException.class
+            FeedbackNotFoundException.class,
+            MethodArgumentNotValidException.class,
+            OwnerNotFoundException.class
     })
     protected ResponseEntity<Object> handleConflict(
             Exception ex) {
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("message", ex.getMessage());
-        if (ex.getClass() == RestaurantNotFoundException.class || ex.getClass() == FeedbackNotFoundException.class) {
+        if (ex.getClass() == RestaurantNotFoundException.class ||
+                ex.getClass() == FeedbackNotFoundException.class ||
+                ex.getClass() == OwnerNotFoundException.class)
+        {
             return ResponseEntity.status(NOT_FOUND)
                     .body(hashMap);
         }

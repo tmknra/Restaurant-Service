@@ -1,5 +1,6 @@
 package com.example.restaurant_service.dto.in;
 
+import com.example.restaurant_service.entity.KitchenType;
 import com.example.restaurant_service.validation.constraint.EmailValidation;
 import com.example.restaurant_service.validation.constraint.PhoneNumberValidation;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -10,6 +11,10 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
@@ -28,6 +33,10 @@ public class RestaurantInDto {
     private String description;
 
     @NotBlank
+    @Enumerated(value = EnumType.STRING)
+    private KitchenType kitchenType;
+
+    @Min(1)
     @Schema(description = "Owners id from user repository, can be null.")
     private Long ownerId;
 
