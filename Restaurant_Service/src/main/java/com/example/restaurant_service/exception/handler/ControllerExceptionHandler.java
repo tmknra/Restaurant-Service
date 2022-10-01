@@ -27,16 +27,16 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     })
     protected ResponseEntity<Object> handleConflict(
             Exception ex) {
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("message", ex.getMessage());
+        HashMap<String, String> message = new HashMap<>();
+        message.put("message", ex.getMessage());
         if (ex.getClass() == RestaurantNotFoundException.class ||
                 ex.getClass() == FeedbackNotFoundException.class ||
                 ex.getClass() == OwnerNotFoundException.class)
         {
             return ResponseEntity.status(NOT_FOUND)
-                    .body(hashMap);
+                    .body(message);
         }
         return ResponseEntity.status(BAD_REQUEST)
-                .body(hashMap);
+                .body(message);
     }
 }
