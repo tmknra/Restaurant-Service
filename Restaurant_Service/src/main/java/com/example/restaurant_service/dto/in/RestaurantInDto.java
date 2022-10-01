@@ -44,7 +44,7 @@ public class RestaurantInDto {
     private String phone_number;
 
     @Nullable
-    @EmailValidation
+    @Email
     private String email_address;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
