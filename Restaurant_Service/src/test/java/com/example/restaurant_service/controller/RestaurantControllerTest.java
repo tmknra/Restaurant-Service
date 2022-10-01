@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class RestaurantControllerTest extends RestaurantServiceAppTests {
 
+    // TODO: add tests
     @Test
     void createRestaurant() {
     }
