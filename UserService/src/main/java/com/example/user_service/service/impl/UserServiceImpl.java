@@ -63,6 +63,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.userEntityToUserOutDto(userRepository.save(userById));
     }
 
+    // TODO: add flag isDeleted
     @Override
     public ResponseEntity<?> deleteUser(Long userId) throws UserNotFoundException {
         userRepository.delete(findUserById(userId));
