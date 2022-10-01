@@ -1,5 +1,6 @@
 package com.example.restaurant_service.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "Feedback entity from database")
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +29,5 @@ public class Feedback {
     @Basic
     @Column
     private Integer rating;
-
-    public Feedback(Restaurant restaurantId, String feedback, Integer rating) {
-        this.restaurantId = restaurantId;
-        this.feedback = feedback;
-        this.rating = rating;
-    }
-
 }
 

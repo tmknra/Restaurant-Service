@@ -22,7 +22,7 @@ public interface UserController {
 
     @Operation(summary = "Updates user by id")
     @PutMapping("/{userId}")
-    UserOutDto updateUser(@RequestBody UserInDto user, @PathVariable Long userId);
+    UserOutDto updateUser(@RequestBody UserInDto user, @PathVariable Long userId) throws UserNotFoundException, UserAlreadyExists;
 
     @Operation(summary = "Delete user by id.")
     @DeleteMapping("/{id}")

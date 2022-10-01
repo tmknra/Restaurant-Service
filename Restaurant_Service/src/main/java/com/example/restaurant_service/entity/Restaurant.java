@@ -1,5 +1,6 @@
 package com.example.restaurant_service.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.hibernate.annotations.*;
 
@@ -18,6 +19,7 @@ import java.util.List;
 @Builder
 @SQLDelete(sql = "update restaurants set is_deleted = true where id=?")
 @Where(clause = "is_deleted=false")
+@Schema(description = "Restaurant entity from database")
 public class Restaurant {
 
     @Id

@@ -36,17 +36,17 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public ResponseEntity<?> addNewFeedback(FeedbackInDto feedbackInDto) throws RestaurantNotFoundException {
+    public FeedbackOutDto addNewFeedback(FeedbackInDto feedbackInDto) throws RestaurantNotFoundException {
         if (restaurantRepository.findById(feedbackInDto.getRestaurantId()).isEmpty()) {
             throw new RestaurantNotFoundException("Restaurant not found!");
         }
         Feedback feedback = feedbackMapper.feedbackInDtoToFeedback(feedbackInDto);
-        return ResponseEntity.ok(feedbackMapper.feedbackToFeedbackOutDto(feedbackRepository.save(feedback)));
+        return feedbackMapper.feedbackToFeedbackOutDto(feedbackRepository.save(feedback));
     }
 
     @Override
-    public ResponseEntity<?> getFeedback(Long id) throws FeedbackNotFoundException {
-        return ResponseEntity.ok(feedbackMapper.feedbackToFeedbackOutDto(getFeedbackById(id)));
+    public FeedbackOutDto getFeedback(Long id) throws FeedbackNotFoundException {
+        return feedbackMapper.feedbackToFeedbackOutDto(getFeedbackById(id));
     }
 
     @Override
@@ -72,7 +72,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> updateFeedbackById(Long feedbackId, FeedbackInDto feedbackInDto)
+    public FeedbackOutDto updateFeedbackById(Long feedbackId, FeedbackInDto feedbackInDto)
             throws FeedbackNotFoundException, RestaurantNotFoundException {
         Optional<Restaurant> byId = restaurantRepository.findById(feedbackInDto.getRestaurantId());
         if (byId.isEmpty()) {
@@ -82,7 +82,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedback.setRestaurantId(Restaurant.builder().id(feedbackInDto.getRestaurantId()).build());
         feedback.setFeedback(feedbackInDto.getFeedback());
         feedback.setRating(feedbackInDto.getRating());
-        return ResponseEntity.ok(feedbackMapper.feedbackToFeedbackOutDto(feedback));
+        return feedbackMapper.feedbackToFeedbackOutDto(feedback);
     }
 
     @Override

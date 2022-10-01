@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @ToString
+@Schema(description = "User entity from database")
 public class UserEntity {
 
     @Id

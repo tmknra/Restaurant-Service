@@ -20,23 +20,24 @@ public interface RestaurantController {
 
     @PostMapping
     @Operation(summary = "Creates new restaurant")
-    ResponseEntity<?> createRestaurant(@RequestBody RestaurantInDto restaurant) throws NumberParseException,
+    RestaurantOutDto createRestaurant(@RequestBody RestaurantInDto restaurant) throws NumberParseException,
             FoundationDateIsExpiredException, PhoneNumberNotRuException, OwnerNotFoundException;
 
     @GetMapping("/{id}")
     @Operation(summary = "Returns restaurant by id.")
-    ResponseEntity<?> getRestaurantById(@PathVariable Long id) throws RestaurantNotFoundException;
+    RestaurantOutDto getRestaurantById(@PathVariable Long id) throws RestaurantNotFoundException;
 
     @GetMapping("/all")
     @Operation(summary = "Returns all restaurants.")
     Page<RestaurantOutDto> getAllRestaurants(Pageable pageable);
 
     @GetMapping("/smallList")
+    @Operation(summary = "Returns shortcut restaurants list")
     Page<RestaurantSmallOutDto> getSmallList(Pageable pageable);
 
     @PutMapping("/{id}")
     @Operation(summary = "Update provided restaurant")
-    ResponseEntity<?> updateRestaurantById(@RequestBody RestaurantInDto restaurantInDto, @PathVariable Long id)
+    RestaurantOutDto updateRestaurantById(@RequestBody RestaurantInDto restaurantInDto, @PathVariable Long id)
             throws RestaurantNotFoundException, OwnerNotFoundException;
 
     @DeleteMapping("/{id}")

@@ -35,7 +35,6 @@ public class UserControllerImpl implements UserController {
         return userService.createUser(user);
     }
 
-    @SneakyThrows
     @Override
     @ApiResponses(value = {
             @ApiResponse(
@@ -44,7 +43,7 @@ public class UserControllerImpl implements UserController {
             @ApiResponse(
                     responseCode = "401",
                     description = "Provided email already taken.")})
-    public UserOutDto updateUser(UserInDto user, Long userId) {
+    public UserOutDto updateUser(UserInDto user, Long userId) throws UserNotFoundException, UserAlreadyExists {
         return userService.updateUser(user, userId);
     }
 
@@ -96,6 +95,13 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Owner successfully updated."),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "One of the provided users not found.")})
     public ResponseEntity<?> updateRestaurantOwner(UpdateRestaurantOwnerDto updateRestaurantOwnerDto) throws UserNotFoundException {
         return ResponseEntity.ok(userService.updateUserToRestaurant(updateRestaurantOwnerDto));
     }

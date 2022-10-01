@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Builder
 @Data
-@Schema(description = "DTO to visualise user from database")
+@Schema(description = "DTO to represent user from database")
 public class UserOutDto {
 
     private Long id;

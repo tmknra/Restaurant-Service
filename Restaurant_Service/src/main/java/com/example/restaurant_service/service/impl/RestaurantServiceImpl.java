@@ -45,8 +45,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public ResponseEntity<?> createRestaurant(RestaurantInDto restaurant) throws NumberParseException, FoundationDateIsExpiredException, PhoneNumberNotRuException, OwnerNotFoundException {
-        if (userServiceClient.getUser(restaurant.getOwnerId()).getStatusCode() == HttpStatus.NOT_FOUND) {
+    public RestaurantOutDto createRestaurant(RestaurantInDto restaurant) throws NumberParseException, FoundationDateIsExpiredException, PhoneNumberNotRuException, OwnerNotFoundException {
+        if (restaurant.getOwnerId() != null && userServiceClient.getUser(restaurant.getOwnerId()).getStatusCode() == HttpStatus.NOT_FOUND) {
             throw new OwnerNotFoundException(String.format("Owner %d not found!", restaurant.getOwnerId()));
         }
         Restaurant restaurantEntity = restaurantMapper.restaurantInDtoToRestaurant(restaurant);
@@ -55,12 +55,12 @@ public class RestaurantServiceImpl implements RestaurantService {
             restaurantEntity.setPhone_number(Util.reformatRuTelephone(restaurant.getPhone_number()));
         if (restaurant.getFoundation_date() != null)
             Util.validateFoundationDate(restaurant.getName(), restaurant.getFoundation_date());
-        return ResponseEntity.ok(restaurantMapper.restaurantToRestaurantOutDto(restaurantRepository.save(restaurantEntity)));
+        return restaurantMapper.restaurantToRestaurantOutDto(restaurantRepository.save(restaurantEntity));
     }
 
     @Override
-    public ResponseEntity<?> getRestaurant(Long id) throws RestaurantNotFoundException {
-        return ResponseEntity.ok(restaurantMapper.restaurantToRestaurantOutDto(getRestaurantById(id)));
+    public RestaurantOutDto getRestaurant(Long id) throws RestaurantNotFoundException {
+        return restaurantMapper.restaurantToRestaurantOutDto(getRestaurantById(id));
     }
 
     @Override
@@ -76,7 +76,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> updateRestaurant(RestaurantInDto restaurantInDto, Long id) throws RestaurantNotFoundException, OwnerNotFoundException {
+    public RestaurantOutDto updateRestaurant(RestaurantInDto restaurantInDto, Long id) throws RestaurantNotFoundException, OwnerNotFoundException {
         if (userServiceClient.getUser(restaurantInDto.getOwnerId()).getStatusCode() == HttpStatus.NOT_FOUND) {
             throw new OwnerNotFoundException(String.format("Owner id{%d} not found!", restaurantInDto.getOwnerId()));
         }
@@ -90,7 +90,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setOwnerId(restaurantInDto.getOwnerId());
         restaurant.setUpdateDatetime(LocalDate.now());
 
-        return ResponseEntity.ok(getRestaurant(id));
+        return getRestaurant(id);
     }
 
     @Override

@@ -40,7 +40,7 @@ public class RestaurantControllerImpl implements RestaurantController {
                     responseCode = "400",
                     description = "Returns when foundation date or phone number is not acceptable")})
     @Override
-    public ResponseEntity<?> createRestaurant(RestaurantInDto restaurant) throws NumberParseException,
+    public RestaurantOutDto createRestaurant(RestaurantInDto restaurant) throws NumberParseException,
             FoundationDateIsExpiredException, PhoneNumberNotRuException, OwnerNotFoundException {
         return restaurantService.createRestaurant(restaurant);
     }
@@ -54,7 +54,7 @@ public class RestaurantControllerImpl implements RestaurantController {
                     responseCode = "404",
                     description = "Provided restaurant not found.")})
     @Override
-    public ResponseEntity<?> getRestaurantById(Long id) throws RestaurantNotFoundException {
+    public RestaurantOutDto getRestaurantById(Long id) throws RestaurantNotFoundException {
         return restaurantService.getRestaurant(id);
     }
 
@@ -82,9 +82,9 @@ public class RestaurantControllerImpl implements RestaurantController {
                     description = "Provided restaurant not found."),
     })
     @Override
-    public ResponseEntity<?> updateRestaurantById(RestaurantInDto restaurantInDto, Long id)
+    public RestaurantOutDto updateRestaurantById(RestaurantInDto restaurantInDto, Long id)
             throws RestaurantNotFoundException, OwnerNotFoundException {
-        return ResponseEntity.ok(restaurantService.updateRestaurant(restaurantInDto, id));
+        return restaurantService.updateRestaurant(restaurantInDto, id);
     }
 
 

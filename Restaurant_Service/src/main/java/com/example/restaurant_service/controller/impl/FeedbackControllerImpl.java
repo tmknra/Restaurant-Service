@@ -2,6 +2,7 @@ package com.example.restaurant_service.controller.impl;
 
 import com.example.restaurant_service.controller.FeedbackController;
 import com.example.restaurant_service.dto.in.FeedbackInDto;
+import com.example.restaurant_service.dto.out.FeedbackOutDto;
 import com.example.restaurant_service.exception.entity.FeedbackNotFoundException;
 import com.example.restaurant_service.exception.entity.RestaurantNotFoundException;
 import com.example.restaurant_service.service.FeedbackService;
@@ -30,7 +31,7 @@ public class FeedbackControllerImpl implements FeedbackController {
                     responseCode = "404",
                     description = "Provided restaurant id not found.")})
     @Override
-    public ResponseEntity<?> addFeedbackByRestaurantId(FeedbackInDto feedbackInDto) throws RestaurantNotFoundException {
+    public FeedbackOutDto addFeedbackByRestaurantId(FeedbackInDto feedbackInDto) throws RestaurantNotFoundException {
         return feedbackService.addNewFeedback(feedbackInDto);
     }
 
@@ -42,7 +43,7 @@ public class FeedbackControllerImpl implements FeedbackController {
                     responseCode = "404",
                     description = "Provided feedback not found.")})
     @Override
-    public ResponseEntity<?> getFeedbackById(Long id) throws FeedbackNotFoundException {
+    public FeedbackOutDto getFeedbackById(Long id) throws FeedbackNotFoundException {
         return feedbackService.getFeedback(id);
     }
 
@@ -55,7 +56,7 @@ public class FeedbackControllerImpl implements FeedbackController {
                     responseCode = "404",
                     description = "Provided feedback/restaurant not found.")})
     @Override
-    public ResponseEntity<?> updateFeedbackById(Long id, FeedbackInDto feedback) throws FeedbackNotFoundException, RestaurantNotFoundException {
+    public FeedbackOutDto updateFeedbackById(Long id, FeedbackInDto feedback) throws FeedbackNotFoundException, RestaurantNotFoundException {
         return feedbackService.updateFeedbackById(id, feedback);
     }
 

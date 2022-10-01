@@ -18,19 +18,17 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface RestaurantService {
-
-
-    ResponseEntity<?> getRestaurant(Long id) throws RestaurantNotFoundException;
+    RestaurantOutDto getRestaurant(Long id) throws RestaurantNotFoundException;
     Page<RestaurantOutDto> getAllRestaurants(Pageable pageable);
     List<Restaurant> getRestaurantsByOwnerId(Long id);
 
 
-    ResponseEntity<?> createRestaurant(RestaurantInDto restaurant) throws NumberParseException, FoundationDateIsExpiredException, PhoneNumberNotRuException, OwnerNotFoundException;
+    RestaurantOutDto createRestaurant(RestaurantInDto restaurant) throws NumberParseException, FoundationDateIsExpiredException, PhoneNumberNotRuException, OwnerNotFoundException;
 
 
     ResponseEntity<?> deleteRestaurantById(Long id) throws RestaurantNotFoundException;
 
-    ResponseEntity<?> updateRestaurant(RestaurantInDto restaurantInDto, Long id) throws RestaurantNotFoundException, OwnerNotFoundException;
+    RestaurantOutDto updateRestaurant(RestaurantInDto restaurantInDto, Long id) throws RestaurantNotFoundException, OwnerNotFoundException;
 
     Page<RestaurantSmallOutDto> getSmallList(Pageable pageable);
 
