@@ -1,23 +1,23 @@
 package com.example.restaurant_service.service;
 
+import com.example.restaurant_service.dto.in.FeedbackInDto;
 import com.example.restaurant_service.dto.out.FeedbackOutDto;
-import com.example.restaurant_service.entity.Feedback;
+import com.example.restaurant_service.exception.entity.FeedbackNotFoundException;
 import com.example.restaurant_service.exception.entity.RestaurantNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 public interface FeedbackService {
 
-    Feedback getFeedback(Long id);
+    FeedbackOutDto getFeedback(Long id) throws FeedbackNotFoundException;
 
-    Page<Feedback> getAllByRestaurantId(Pageable pageable, Long restaurantId);
-    Double getAverageRatingByRestaurantID(Long restaurantID);
-    String getFeedbackTextByID(Long id);
+    Page<FeedbackOutDto> getAllByRestaurantId(Pageable pageable, Long restaurantId) throws RestaurantNotFoundException;
+    ResponseEntity<?> getAverageRatingByRestaurantId(Long restaurantID) throws RestaurantNotFoundException;
 
-    FeedbackOutDto addNewFeedback(Long restaurantId, String feedback, Integer rating) throws RestaurantNotFoundException;
-    Feedback changeFeedbackByID(Long feedbackID, String newFeedback, Integer newRating);
+    FeedbackOutDto addNewFeedback(FeedbackInDto feedbackInDto) throws RestaurantNotFoundException;
+    FeedbackOutDto updateFeedbackById(Long feedbackId, FeedbackInDto feedbackInDto) throws FeedbackNotFoundException, RestaurantNotFoundException;
 
-    void deleteFeedbackById(Long id);
-    void deleteAllByRestaurantId(Long restaurantId);
+    ResponseEntity<?> deleteFeedbackById(Long id) throws FeedbackNotFoundException;
 
 }

@@ -32,6 +32,6 @@ public class Util {
 
     public static void validateFoundationDate(String restName, LocalDate date) throws FoundationDateIsExpiredException {
         if (date != null && LocalDate.now().isBefore(date))
-            throw new FoundationDateIsExpiredException(restName, date);
+            throw new FoundationDateIsExpiredException("Invalid date.");
     }
 }

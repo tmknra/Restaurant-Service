@@ -20,7 +20,10 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.7.3'
+    implementation 'org.springframework.boot:spring-boot-starter-validation:2.7.3'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure:2.7.3'
+
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
@@ -31,9 +34,14 @@ dependencies {
 
     implementation 'org.liquibase:liquibase-core'
 
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+//    compileOnly 'org.springframework.amqp:spring-rabbit'
+
     implementation 'org.mapstruct:mapstruct:1.5.2.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
+
 }
 
 tasks.named('test') {
