@@ -27,11 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(locations = "classpath:test-application.properties")
 public class RestaurantServiceAppTests {
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @BeforeEach
     void contextLoads() throws Exception {
         // RestaurantInDto testRest = RestaurantInDto.builder()
