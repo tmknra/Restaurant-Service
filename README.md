@@ -24,7 +24,7 @@ o	Mockito
 В качестве UI использован Swagger. Ссылки на интерфейс прописаны перед описание модулей.
 
 http://localhost:8080/swagger-ui/index.html
-1) Restaurant Service
+1) Restaurant Service "\n"
   Основной модуль проекта. Выполнен в двух контроллерах:
 
   o RestaurantController - реализованы функции:
