@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(findUserById(userId));
         rabbitTemplate.convertAndSend("deleteOwnerQueue", new DeleteRestaurantOwnerDto(userId));
         HashMap<String, String> message = new HashMap<>();
+        message.put("message", "User successfully deleted.");
         return ResponseEntity.ok(message);
     }
 
@@ -105,7 +106,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> updateUserToRestaurant(UpdateRestaurantOwnerDto updateRestaurantOwnerDto) throws UserNotFoundException {
+    public ResponseEntity<?> updateUserToRestaurant(UpdateRestaurantOwnerDto updateRestaurantOwnerDto)
+            throws UserNotFoundException {
         findUserById(updateRestaurantOwnerDto.getOldUserId());
         findUserById(updateRestaurantOwnerDto.getNewUserId());
         rabbitTemplate.convertAndSend("updateOwnerQueue", updateRestaurantOwnerDto);
