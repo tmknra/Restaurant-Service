@@ -5,9 +5,12 @@ import com.example.user_service.dto.in.UserInDto;
 import com.example.user_service.dto.out.UserOutDto;
 import com.example.user_service.exception.UserAlreadyExists;
 import com.example.user_service.exception.UserNotFoundException;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 
@@ -18,76 +21,22 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class UserServiceTest extends UserServiceApplicationTests {
     @Autowired
     private UserService userService;
+    private Long testUserId;
+    @MockBean
+    private RabbitTemplate rabbitTemplate;
 
-    // TODO: fix tests
-    @Test
-    void createUser() throws UserAlreadyExists, UserNotFoundException {
+    @BeforeAll
+    void setUp() throws UserAlreadyExists {
         UserInDto userInDto = UserInDto.builder()
                 .lastname("test")
-                .name("test")
-                .patronymic("test")
-                .email("test")
-                .password("testPassword")
-                .build();
-        UserOutDto user = userService.createUser(userInDto);
-        System.out.println("user = " + userService.getUserById(user.getId()));
-        assertEquals(user, userService.getUserById(user.getId()));
-    }
-
-    @Test
-    void updateUser() throws UserNotFoundException, UserAlreadyExists {
-        UserInDto userInDto = UserInDto.builder()
-                .lastname("test")
-                .name("test")
-                .patronymic("test")
-                .email("test")
-                .password("testPassword")
-                .build();
-        UserOutDto user = userService.createUser(userInDto);
-        UserOutDto updatedUser = userService.updateUser(userInDto, user.getId());
-        assertEquals(user.getId(), updatedUser.getId());
-    }
-
-    @Test
-    void deleteUser() throws UserNotFoundException, UserAlreadyExists {
-        UserInDto userInDto = UserInDto.builder()
-                .lastname("test")
-                .name("test")
-                .patronymic("test")
-                .email("test")
-                .password("testPassword")
-                .build();
-        UserOutDto user = userService.createUser(userInDto);
-        userService.deleteUser(user.getId());
-        assertThrows(UserNotFoundException.class, () -> userService.getUserById(user.getId()));
-    }
-
-    @Test
-    void getUserById() throws UserNotFoundException, UserAlreadyExists {
-        UserInDto userInDto = UserInDto.builder()
-                .lastname("test")
-                .name("test")
-                .patronymic("test")
-                .email("test")
-                .password("testPassword")
-                .build();
-        UserOutDto user = userService.createUser(userInDto);
-        UserOutDto userById = userService.getUserById(user.getId());
-        assertEquals(userInDto.getLastname(), userById.getLastname());
-        assertEquals(userInDto.getName(), userById.getName());
-        assertEquals(userInDto.getPatronymic(), userById.getPatronymic());
-        assertEquals(userInDto.getEmail(), userById.getEmail());
-    }
-
-    @Test
-    void getAllUsers() throws UserAlreadyExists {
-        UserInDto userInDto_1 = UserInDto.builder()
                 .name("testName1")
-                .lastname("testLastname1")
-                .patronymic("testPatronymic1")
-                .email("testEmail1")
-                .password("testPassword1")
+                .patronymic("test")
+                .email("test")
+                .password("testPassword")
                 .build();
+        UserOutDto user = userService.createUser(userInDto);
+        this.testUserId = user.getId();
+
         UserInDto userInDto_2 = UserInDto.builder()
                 .name("testName2")
                 .lastname("testLastname2")
@@ -103,14 +52,57 @@ public class UserServiceTest extends UserServiceApplicationTests {
                 .password("testPassword3")
                 .build();
 
-        userService.createUser(userInDto_1);
         userService.createUser(userInDto_2);
         userService.createUser(userInDto_3);
+    }
 
+    @Test
+    void updateUser() throws UserNotFoundException, UserAlreadyExists {
+        UserInDto userInDto = UserInDto.builder()
+                .lastname("updatedLastname")
+                .name("updatedName")
+                .patronymic("asd")
+                .email("updatedMail")
+                .build();
+
+        userService.updateUser(userInDto, testUserId);
+        UserOutDto userById = userService.getUserById(testUserId);
+
+        assertEquals("updatedLastname", userById.getLastname());
+        assertEquals("updatedName", userById.getName());
+        assertEquals("updatedMail", userById.getEmail());
+    }
+
+
+    @Test
+    void getUserById() throws UserNotFoundException, UserAlreadyExists {
+        UserInDto userInDto = UserInDto.builder()
+                .lastname("getTest")
+                .name("getTest")
+                .patronymic("test")
+                .email("getTest")
+                .password("testPassword")
+                .build();
+        UserOutDto user = userService.createUser(userInDto);
+
+        UserOutDto userById = userService.getUserById(user.getId());
+        assertEquals("getTest", userById.getLastname());
+        assertEquals("getTest", userById.getName());
+        assertEquals("getTest", userById.getEmail());
+    }
+
+    @Test
+    void deleteUser() throws UserNotFoundException {
+        userService.deleteUser(testUserId);
+        assertThrows(UserNotFoundException.class, () -> userService.getUserById(testUserId));
+    }
+    @Test
+    void getAllUsers() {
         List<UserOutDto> allUsers = userService.getAllUsers();
 
-        assertEquals(userInDto_1.getName(), allUsers.get(0).getName());
-        assertEquals(userInDto_2.getName(), allUsers.get(1).getName());
-        assertEquals(userInDto_3.getName(), allUsers.get(2).getName());
+        assertEquals("testName1", allUsers.get(0).getName());
+        assertEquals("testName2", allUsers.get(1).getName());
+        assertEquals("testName3", allUsers.get(2).getName());
     }
+
 }

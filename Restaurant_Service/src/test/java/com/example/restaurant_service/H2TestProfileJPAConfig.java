@@ -23,8 +23,4 @@ public class H2TestProfileJPAConfig {
 
         return dataSource;
     }
-
-    // configure entityManagerFactory
-    // configure transactionManager
-    // configure additional Hibernate properties
 }
