@@ -20,4 +20,6 @@ public class UserServiceApplication {
         return new Jackson2JsonMessageConverter();
     }
 
+    // TODO: 10.01.2023 need add services logs
+
 }

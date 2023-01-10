@@ -1,10 +1,10 @@
 package com.example.user_service.controller;
 
 import com.example.user_service.UserServiceApplicationTests;
+import com.example.user_service.dto.UpdateRestaurantOwnerDto;
 import com.example.user_service.dto.in.ChangePasswordInDto;
 import com.example.user_service.dto.in.UserInDto;
 import com.example.user_service.dto.out.UserOutDto;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -131,9 +131,17 @@ public class UserControllerTest extends UserServiceApplicationTests {
                 .andExpect(jsonPath("$.message").value("Password successfully changed"));
     }
 
-    // TODO: 09.01.2023
-    // need updateOwner test
     @Test
-    void updateRestaurantOwner() {
+    void updateRestaurantOwner() throws Exception {
+        UpdateRestaurantOwnerDto updateOwner = UpdateRestaurantOwnerDto.builder()
+                .oldUserId(1L)
+                .newUserId(2L)
+                .build();
+        String json = objectMapper.writeValueAsString(updateOwner);
+        this.mockMvc.perform(put("/users/updateOwner")
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.body.newOwner").value(updateOwner.getNewUserId()));
     }
 }
