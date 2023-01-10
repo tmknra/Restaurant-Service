@@ -4,6 +4,7 @@ import com.example.user_service.dto.UpdateRestaurantOwnerDto;
 import com.example.user_service.dto.in.ChangePasswordInDto;
 import com.example.user_service.dto.in.UserInDto;
 import com.example.user_service.dto.out.UserOutDto;
+import com.example.user_service.exception.InvalidPasswordException;
 import com.example.user_service.exception.UserAlreadyExists;
 import com.example.user_service.exception.UserNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,11 +19,11 @@ public interface UserController {
 
     @Operation(summary = "Creates new user")
     @PostMapping
-    UserOutDto createUser(@RequestBody UserInDto user) throws UserAlreadyExists;
+    UserOutDto createUser(@RequestBody @Valid UserInDto user) throws UserAlreadyExists;
 
     @Operation(summary = "Updates user by id")
     @PutMapping("/{userId}")
-    UserOutDto updateUser(@RequestBody UserInDto user, @PathVariable Long userId) throws UserNotFoundException, UserAlreadyExists;
+    UserOutDto updateUser(@RequestBody @Valid UserInDto user, @PathVariable Long userId) throws UserNotFoundException, UserAlreadyExists;
 
     @Operation(summary = "Delete user by id.")
     @DeleteMapping("/{id}")
@@ -38,7 +39,7 @@ public interface UserController {
 
     @Operation(summary = "Changing user password")
     @PutMapping("/pass")
-    ResponseEntity<?> changePasswordById(@RequestBody @Valid ChangePasswordInDto body) throws UserNotFoundException;
+    ResponseEntity<?> changePasswordById(@RequestBody @Valid ChangePasswordInDto body) throws UserNotFoundException, InvalidPasswordException;
 
     @Operation(summary = "Updates restaurant owner")
     @PutMapping("/updateOwner")
