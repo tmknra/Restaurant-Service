@@ -54,13 +54,13 @@ public class UserControllerTest extends UserServiceApplicationTests {
                 .name("testName1")
                 .lastname("lastname")
                 .patronymic("patronymic")
-                .email("testMail1")
+                .email("testMail1@mail.mm")
                 .build();
         UserInDto user2 = UserInDto.builder()
                 .name("testName2")
                 .lastname("lastname")
                 .patronymic("patronymic")
-                .email("testMail2")
+                .email("testMail2@mai.mm")
                 .build();
 
         String json1 = objectMapper.writeValueAsString(user1);
