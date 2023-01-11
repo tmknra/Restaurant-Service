@@ -1,8 +1,14 @@
-#version: '3'
-#services:
-#  rabbitmq:
-#    container_name: my_rabbit
-#    image: rabbitmq:3-management
-#    ports:
-#      - "5672:5672"
-#      - "15672:15672"
+version: '3'
+
+services:
+  user_service:
+    image: tmknra/user-service:latest
+    container_name: user-service-application
+    ports:
+      - "8081:8081"
+    environment:
+      - "SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/restaurant_app_db"
+      - "SPRING_DATASOURCE_USERNAME=postgres"
+      - "SPRING_DATASOURCE_PASSWORD=root"
+      - "SPRING_JPA_HIBERNATE_DDL_AUTO=update"
+    restart: always

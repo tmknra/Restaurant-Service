@@ -13,6 +13,6 @@ public abstract class FeedbackMapper {
     public abstract FeedbackOutDto feedbackToFeedbackOutDto(Feedback feedback);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "restaurantId", ignore = true)
+    @Mapping(target = "restaurantId.id", source = "restaurantId")
     public abstract Feedback feedbackInDtoToFeedback(FeedbackInDto feedback);
 }

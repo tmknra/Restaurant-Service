@@ -29,7 +29,8 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final FeedbackMapper feedbackMapper;
 
     @Autowired
-    public FeedbackServiceImpl(RestaurantRepository restaurantRepository, FeedbackRepository feedbackRepository, FeedbackMapper feedbackMapper) {
+    public FeedbackServiceImpl(RestaurantRepository restaurantRepository,
+                               FeedbackRepository feedbackRepository, FeedbackMapper feedbackMapper) {
         this.restaurantRepository = restaurantRepository;
         this.feedbackRepository = feedbackRepository;
         this.feedbackMapper = feedbackMapper;
@@ -41,6 +42,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             throw new RestaurantNotFoundException("Restaurant not found!");
         }
         Feedback feedback = feedbackMapper.feedbackInDtoToFeedback(feedbackInDto);
+        System.out.println(feedback);
         return feedbackMapper.feedbackToFeedbackOutDto(feedbackRepository.save(feedback));
     }
 
@@ -50,7 +52,8 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public Page<FeedbackOutDto> getAllByRestaurantId(Pageable pageable, Long restaurantId) throws RestaurantNotFoundException {
+    public Page<FeedbackOutDto> getAllByRestaurantId(Pageable pageable, Long restaurantId)
+            throws RestaurantNotFoundException {
         if (restaurantRepository.findById(restaurantId).isEmpty()) {
             throw new RestaurantNotFoundException("Restaurant not found!");
         }

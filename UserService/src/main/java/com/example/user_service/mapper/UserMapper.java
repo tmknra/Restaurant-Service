@@ -12,6 +12,7 @@ public abstract class UserMapper {
     public abstract UserOutDto userEntityToUserOutDto(UserEntity userEntity);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "registrationDate", ignore = true)
     public abstract UserEntity userInDtoToUserEntity(UserInDto userInDto);
 
 }

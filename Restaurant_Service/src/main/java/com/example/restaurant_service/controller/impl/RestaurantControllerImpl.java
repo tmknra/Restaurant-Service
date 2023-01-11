@@ -31,7 +31,6 @@ public class RestaurantControllerImpl implements RestaurantController {
         this.feedbackService = feedbackService;
     }
 
-
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",

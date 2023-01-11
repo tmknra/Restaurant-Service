@@ -5,6 +5,7 @@ import com.example.user_service.dto.UpdateRestaurantOwnerDto;
 import com.example.user_service.dto.in.ChangePasswordInDto;
 import com.example.user_service.dto.in.UserInDto;
 import com.example.user_service.dto.out.UserOutDto;
+import com.example.user_service.exception.InvalidPasswordException;
 import com.example.user_service.exception.UserAlreadyExists;
 import com.example.user_service.exception.UserNotFoundException;
 import com.example.user_service.service.UserService;
@@ -90,7 +91,8 @@ public class UserControllerImpl implements UserController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Provided user not found.")})
-    public ResponseEntity<?> changePasswordById(ChangePasswordInDto body) throws UserNotFoundException {
+    public ResponseEntity<?> changePasswordById(ChangePasswordInDto body)
+            throws UserNotFoundException, InvalidPasswordException {
         return userService.changePasswordById(body);
     }
 

@@ -8,8 +8,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
-@EnableRabbit
-@Component
+// @EnableRabbit
+// @Component
 public class UpdateOwnerListener {
 
     private final RestaurantService restaurantService;

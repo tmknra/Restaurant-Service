@@ -6,6 +6,7 @@ import com.example.user_service.dto.in.ChangePasswordInDto;
 import com.example.user_service.dto.in.UserInDto;
 import com.example.user_service.dto.out.UserOutDto;
 import com.example.user_service.entity.UserEntity;
+import com.example.user_service.exception.InvalidPasswordException;
 import com.example.user_service.exception.UserAlreadyExists;
 import com.example.user_service.exception.UserNotFoundException;
 import com.example.user_service.mapper.UserMapper;
@@ -69,6 +70,7 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(findUserById(userId));
         rabbitTemplate.convertAndSend("deleteOwnerQueue", new DeleteRestaurantOwnerDto(userId));
         HashMap<String, String> message = new HashMap<>();
+        message.put("message", "User successfully deleted.");
         return ResponseEntity.ok(message);
     }
 
@@ -90,14 +92,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> changePasswordById(ChangePasswordInDto changePasswordInDto) throws UserNotFoundException {
+    public ResponseEntity<?> changePasswordById(ChangePasswordInDto changePasswordInDto)
+            throws UserNotFoundException, InvalidPasswordException {
         Optional<UserEntity> byEmail = userRepository.findByEmail(changePasswordInDto.getEmail());
         if (byEmail.isEmpty())
             throw new UserNotFoundException("User does not exist with email: " + changePasswordInDto.getEmail());
         UserEntity userEntity = byEmail.get();
 
         if (!changePasswordInDto.getOldPassword().matches(userEntity.getPassword()))
-            throw new RuntimeException("Invalid old password!");
+            throw new InvalidPasswordException("Wrong old password!");
         userEntity.setPassword(changePasswordInDto.getNewPassword());
         HashMap<String, String> message = new HashMap<>();
         message.put("message", "Password successfully changed");
@@ -105,7 +108,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> updateUserToRestaurant(UpdateRestaurantOwnerDto updateRestaurantOwnerDto) throws UserNotFoundException {
+    public ResponseEntity<?> updateUserToRestaurant(UpdateRestaurantOwnerDto updateRestaurantOwnerDto)
+            throws UserNotFoundException {
         findUserById(updateRestaurantOwnerDto.getOldUserId());
         findUserById(updateRestaurantOwnerDto.getNewUserId());
         rabbitTemplate.convertAndSend("updateOwnerQueue", updateRestaurantOwnerDto);
