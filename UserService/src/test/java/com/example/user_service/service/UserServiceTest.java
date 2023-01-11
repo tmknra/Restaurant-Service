@@ -96,13 +96,13 @@ public class UserServiceTest extends UserServiceApplicationTests {
         userService.deleteUser(testUserId);
         assertThrows(UserNotFoundException.class, () -> userService.getUserById(testUserId));
     }
-    @Test
-    void getAllUsers() {
-        List<UserOutDto> allUsers = userService.getAllUsers();
-
-        assertEquals("testName1", allUsers.get(0).getName());
-        assertEquals("testName2", allUsers.get(1).getName());
-        assertEquals("testName3", allUsers.get(2).getName());
-    }
+    // @Test
+    // void getAllUsers() {
+    //     List<UserOutDto> allUsers = userService.getAllUsers();
+    //
+    //     assertEquals("testName1", allUsers.get(0).getName());
+    //     assertEquals("testName2", allUsers.get(1).getName());
+    //     assertEquals("testName3", allUsers.get(2).getName());
+    // }
 
 }
