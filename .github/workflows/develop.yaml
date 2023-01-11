@@ -7,7 +7,7 @@ on:
 
 env:
   CONTAINER_NAME: restaurant-service
-  IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ github.event.repository.name }}
+  IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.RESTAURANT_SERVICE_IMAGE_NAME }}
 
 jobs:
   build:
