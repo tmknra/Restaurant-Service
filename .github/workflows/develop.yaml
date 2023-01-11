@@ -21,7 +21,7 @@ jobs:
           java-version: '17'
           cache: 'gradle'
       - run: chmod +x ./Restaurant_Service/gradlew
-      - run: ./gradlew build --no-daemon
+      - run: ./Restaurant_Service/gradlew build --no-daemon
 
   shipping:
     name: Prepare docker image
