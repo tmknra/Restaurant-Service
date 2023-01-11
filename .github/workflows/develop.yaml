@@ -62,7 +62,7 @@ jobs:
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
           source: "./RestaurantService/docker-compose.yaml"
-          target: "restaurant-service"
+          target: "RestaurantService"
       - name: Executing remote command
         uses: appleboy/ssh-action@master
         with:
