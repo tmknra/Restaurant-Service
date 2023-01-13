@@ -89,7 +89,7 @@ jobs:
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
           source: "./Restaurant_Service/docker-compose.yml"
-          target: "restaurant-service"
+          target: "application"
 #      - name: copy file via ssh key
 #        uses: appleboy/scp-action@master
 #        with:
@@ -107,7 +107,7 @@ jobs:
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
           script: |
-            cd ./restautant-service &&
+            cd application &&
             docker pull ${{ env.IMAGE_NAME }}:latest &&
             docker-compose up --build -d
 #            &&
