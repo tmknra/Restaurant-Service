@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name = "userServiceClient", url = "http://localhost:8081", decode404 = true)
+@FeignClient(name = "userServiceClient", url = "http://80.78.253.4:8081", decode404 = true)
 public interface UserServiceClient {
     @RequestMapping(method = RequestMethod.GET, value = "/users/{userId}",
             consumes = "application/json", produces = "application/json")
