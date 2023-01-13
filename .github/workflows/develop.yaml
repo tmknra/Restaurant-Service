@@ -50,7 +50,7 @@ jobs:
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
   shipping-user-service:
-    name: Prepare user-service dockr image
+    name: Prepare user-service docker image
     needs: [ build ]
     runs-on: ubuntu-latest
     steps:
@@ -69,7 +69,7 @@ jobs:
         with:
           context: ./UserService
           push: true
-          tags: ${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.USER_SERVICE_IMAGE_NAME }}:latest
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
