@@ -107,7 +107,7 @@ jobs:
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
           script: |
-            cd RestaurantService &&
+            cd Restaurant_Service &&
             docker pull ${{ env.IMAGE_NAME }}:latest &&
             docker-compose up --build -d
 #            &&
