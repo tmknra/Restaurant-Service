@@ -25,7 +25,7 @@ Cервис обзора ресторанов. Пользователь серв
 Для запуска контейнера RabbitMQ необходимо ввести команду ниже в терминале, после чего запустить сам проект:  
 docker run -d -p 5672:5672 -p 15672:15672 --name my-rabbit rabbitmq:3-management  
 
-1) [Restaurant Service](http://80.78.253.4/:8080/swagger-ui/index.html)  
+1) [Restaurant Service](http://80.78.253.4:8080/swagger-ui/index.html)  
    Основной модуль проекта. Выполнен в двух контроллерах:
 
    RestaurantController:
@@ -46,7 +46,7 @@ docker run -d -p 5672:5672 -p 15672:15672 --name my-rabbit rabbitmq:3-management
     мого пользователя на выходе получаем ошибку, данные не добавляются.
 
 
-2) [User Service](http://80.78.253.4/:8081/swagger-ui/index.html)  
+2) [User Service](http://80.78.253.4:8081/swagger-ui/index.html)  
    Сервис управления пользователями. Реализация сервиса подразумевает дальнейшее добавления модуля Security.
    Реализованные операции:
     - Создание пользователя.
