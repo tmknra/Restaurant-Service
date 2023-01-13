@@ -33,3 +33,17 @@ services:
       - "SPRING_DATASOURCE_PASSWORD=root"
       - "SPRING_JPA_HIBERNATE_DDL_AUTO=update"
     restart: always
+
+  user_service:
+    image: tmknra/user-service:latest
+    container_name: restaurant-service-application
+    depends_on:
+      - database
+    ports:
+      - "8081:8081"
+    environment:
+      - "SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/restaurant_app_db"
+      - "SPRING_DATASOURCE_USERNAME=postgres"
+      - "SPRING_DATASOURCE_PASSWORD=root"
+      - "SPRING_JPA_HIBERNATE_DDL_AUTO=update"
+    restart: always
