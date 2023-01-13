@@ -23,6 +23,7 @@ jobs:
           cache: 'gradle'
       - run: chmod +x ./Restaurant_Service/gradlew
       - run: ./Restaurant_Service/gradlew build --no-daemon
+      - run: chmod +x ./UserService/gradlew
       - run: ./UserService/gradlew build --no-daemon
 
   shipping-restaurant-service:
