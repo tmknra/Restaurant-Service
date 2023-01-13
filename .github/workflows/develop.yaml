@@ -109,7 +109,8 @@ jobs:
           script: |
             cd RestaurantService &&
             docker pull ${{ env.IMAGE_NAME }}:latest &&
-            docker-compose up --build -d && 
+            docker-compose up --build -d
+#            &&
 #            cd ../UserService &&
 #            docker pull ${{ env.USER_SERVICE_IMAGE_NAME }}:latest &&
 #            docker-compose up --build -d
