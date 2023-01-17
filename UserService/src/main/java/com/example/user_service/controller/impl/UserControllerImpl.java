@@ -6,13 +6,14 @@ import com.example.user_service.dto.in.ChangePasswordInDto;
 import com.example.user_service.dto.in.UserInDto;
 import com.example.user_service.dto.out.UserOutDto;
 import com.example.user_service.exception.InvalidPasswordException;
-import com.example.user_service.exception.UserAlreadyExists;
+import com.example.user_service.exception.UserAlreadyExistsException;
 import com.example.user_service.exception.UserNotFoundException;
 import com.example.user_service.service.UserService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,7 +33,7 @@ public class UserControllerImpl implements UserController {
             @ApiResponse(
                     responseCode = "401",
                     description = "Provided email already taken.")})
-    public UserOutDto createUser(UserInDto user) throws UserAlreadyExists {
+    public UserOutDto createUser(UserInDto user) throws UserAlreadyExistsException {
         return userService.createUser(user);
     }
 
@@ -44,7 +45,7 @@ public class UserControllerImpl implements UserController {
             @ApiResponse(
                     responseCode = "401",
                     description = "Provided email already taken.")})
-    public UserOutDto updateUser(UserInDto user, Long userId) throws UserNotFoundException, UserAlreadyExists {
+    public UserOutDto updateUser(UserInDto user, Long userId) throws UserNotFoundException, UserAlreadyExistsException {
         return userService.updateUser(user, userId);
     }
 
@@ -79,8 +80,8 @@ public class UserControllerImpl implements UserController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Returns users list.")})
-    public List<UserOutDto> getAllUsers() {
-        return userService.getAllUsers();
+    public List<UserOutDto> getAllUsers(Pageable pageable) {
+        return userService.getAllUsers(pageable);
     }
 
     @Override
