@@ -15,7 +15,7 @@ import java.util.List;
 public interface UserService {
 
     UserOutDto createUser(UserInDto user) throws UserAlreadyExistsException;
-    UserOutDto updateUser(UserInDto user, long userId) throws UserNotFoundException, UserAlreadyExistsException;
+    UserOutDto updateUser(UserInDto user, long userId) throws UserNotFoundException, UserAlreadyExistsException, InvalidPasswordException;
     ResponseEntity<?> deleteUser(Long userId) throws UserNotFoundException;
 
     UserOutDto getUserById(Long id) throws UserNotFoundException;

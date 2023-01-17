@@ -24,7 +24,7 @@ public interface UserController {
 
     @Operation(summary = "Updates user by id")
     @PutMapping("/{userId}")
-    UserOutDto updateUser(@RequestBody @Valid UserInDto user, @PathVariable Long userId) throws UserNotFoundException, UserAlreadyExistsException;
+    UserOutDto updateUser(@RequestBody @Valid UserInDto user, @PathVariable Long userId) throws UserNotFoundException, UserAlreadyExistsException, InvalidPasswordException;
 
     @Operation(summary = "Delete user by id.")
     @DeleteMapping("/{id}")

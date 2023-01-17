@@ -19,7 +19,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @ControllerAdvice
 @Slf4j
-public class ControllerExceptionHandler  {
+public class ControllerExceptionHandler {
 
     @ExceptionHandler(value
             = {
@@ -31,7 +31,7 @@ public class ControllerExceptionHandler  {
             Exception ex) {
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("message", ex.getMessage());
-        log.error("Handled exception: " + ex.getClass().getSimpleName() + ". With message: " +ex.getMessage());
+        log.error("Handled exception: " + ex.getClass().getSimpleName() + ". With message: " + ex.getMessage());
         if (ex.getClass() == UserNotFoundException.class) {
             return ResponseEntity.status(NOT_FOUND)
                     .body(hashMap);
@@ -43,11 +43,12 @@ public class ControllerExceptionHandler  {
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     protected ResponseEntity<Object> handleValidationException(
             MethodArgumentNotValidException ex) {
-        log.error("Handled exception: " + ex.getClass() + ". With message: " +ex.getMessage());
         Map<String, String> response = ex.getBindingResult().getFieldErrors()
                 .stream()
-                .collect(Collectors.toMap(FieldError::getField,  fieldError -> "Invalid format error!"));
+                .collect(Collectors.toMap(FieldError::getField, fieldError -> "Invalid format error!"));
 
+        log.error("Handled exception: " + ex.getClass().getSimpleName() + ". With message(s): "
+                + response.keySet().stream().map(s -> s + " : " + response.get(s)).collect(Collectors.joining("; ")));
         return ResponseEntity.status(UNAUTHORIZED)
                 .body(response);
     }

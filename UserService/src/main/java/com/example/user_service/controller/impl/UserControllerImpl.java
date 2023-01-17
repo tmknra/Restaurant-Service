@@ -24,8 +24,13 @@ import java.util.List;
 @Slf4j
 public class UserControllerImpl implements UserController {
 
-    @Autowired
-    private UserService userService;
+
+    private final UserService userService;
+
+    public UserControllerImpl(UserService userService) {
+        log.info("Initialized UserController");
+        this.userService = userService;
+    }
 
     @Override
     @ApiResponses(value = {
@@ -36,7 +41,7 @@ public class UserControllerImpl implements UserController {
                     responseCode = "401",
                     description = "Provided email already taken.")})
     public UserOutDto createUser(UserInDto user) throws UserAlreadyExistsException {
-        log.info("Got POST request from client to create new user with");
+        log.info("Got POST request from client to create new user with 'email:{}'", user.getEmail());
         return userService.createUser(user);
     }
 
@@ -48,7 +53,8 @@ public class UserControllerImpl implements UserController {
             @ApiResponse(
                     responseCode = "401",
                     description = "Provided email already taken.")})
-    public UserOutDto updateUser(UserInDto user, Long userId) throws UserNotFoundException, UserAlreadyExistsException {
+    public UserOutDto updateUser(UserInDto user, Long userId)
+            throws UserNotFoundException, UserAlreadyExistsException, InvalidPasswordException {
         log.info("Got PUT request from client to update user");
         return userService.updateUser(user, userId);
     }

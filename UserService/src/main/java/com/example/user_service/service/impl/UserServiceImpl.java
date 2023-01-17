@@ -54,8 +54,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserOutDto updateUser(UserInDto user, long userId) throws UserNotFoundException, UserAlreadyExistsException {
+    public UserOutDto updateUser(UserInDto user, long userId)
+            throws UserNotFoundException, UserAlreadyExistsException, InvalidPasswordException {
         UserEntity userById = findUserById(userId);
+
+        if (!user.getPassword().equals(userById.getPassword()))
+            throw new InvalidPasswordException("Wrong old password!");
+        userById.setPassword(user.getPassword());
         if (user.getLastname() != null)
             userById.setLastname(user.getLastname());
         if (user.getName() != null)
