@@ -3,7 +3,7 @@ package com.example.user_service.service;
 import com.example.user_service.UserServiceApplicationTests;
 import com.example.user_service.dto.in.UserInDto;
 import com.example.user_service.dto.out.UserOutDto;
-import com.example.user_service.exception.UserAlreadyExists;
+import com.example.user_service.exception.UserAlreadyExistsException;
 import com.example.user_service.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -11,8 +11,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -26,7 +24,7 @@ public class UserServiceTest extends UserServiceApplicationTests {
     private RabbitTemplate rabbitTemplate;
 
     @BeforeAll
-    void setUp() throws UserAlreadyExists {
+    void setUp() throws UserAlreadyExistsException {
         UserInDto userInDto = UserInDto.builder()
                 .lastname("test")
                 .name("testName1")
@@ -57,7 +55,7 @@ public class UserServiceTest extends UserServiceApplicationTests {
     }
 
     @Test
-    void updateUser() throws UserNotFoundException, UserAlreadyExists {
+    void updateUser() throws UserNotFoundException, UserAlreadyExistsException {
         UserInDto userInDto = UserInDto.builder()
                 .lastname("updatedLastname")
                 .name("updatedName")
@@ -75,7 +73,7 @@ public class UserServiceTest extends UserServiceApplicationTests {
 
 
     @Test
-    void getUserById() throws UserNotFoundException, UserAlreadyExists {
+    void getUserById() throws UserNotFoundException, UserAlreadyExistsException {
         UserInDto userInDto = UserInDto.builder()
                 .lastname("getTest")
                 .name("getTest")
