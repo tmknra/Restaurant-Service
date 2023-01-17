@@ -1,9 +1,9 @@
 package com.example.user_service.exception.handler;
 
 import com.example.user_service.exception.InvalidPasswordException;
-import com.example.user_service.exception.UserAlreadyExists;
+import com.example.user_service.exception.UserAlreadyExistsException;
 import com.example.user_service.exception.UserNotFoundException;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,11 +18,12 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @ControllerAdvice
+@Slf4j
 public class ControllerExceptionHandler  {
 
     @ExceptionHandler(value
             = {
-            UserAlreadyExists.class,
+            UserAlreadyExistsException.class,
             UserNotFoundException.class,
             InvalidPasswordException.class
     })
@@ -30,6 +31,7 @@ public class ControllerExceptionHandler  {
             Exception ex) {
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("message", ex.getMessage());
+        log.error("Handled exception: " + ex.getClass().getSimpleName() + ". With message: " +ex.getMessage());
         if (ex.getClass() == UserNotFoundException.class) {
             return ResponseEntity.status(NOT_FOUND)
                     .body(hashMap);
@@ -41,6 +43,7 @@ public class ControllerExceptionHandler  {
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     protected ResponseEntity<Object> handleValidationException(
             MethodArgumentNotValidException ex) {
+        log.error("Handled exception: " + ex.getClass() + ". With message: " +ex.getMessage());
         Map<String, String> response = ex.getBindingResult().getFieldErrors()
                 .stream()
                 .collect(Collectors.toMap(FieldError::getField,  fieldError -> "Invalid format error!"));
