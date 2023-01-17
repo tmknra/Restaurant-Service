@@ -3,6 +3,7 @@ package com.example.user_service.service;
 import com.example.user_service.UserServiceApplicationTests;
 import com.example.user_service.dto.in.UserInDto;
 import com.example.user_service.dto.out.UserOutDto;
+import com.example.user_service.exception.InvalidPasswordException;
 import com.example.user_service.exception.UserAlreadyExistsException;
 import com.example.user_service.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
@@ -55,7 +56,7 @@ public class UserServiceTest extends UserServiceApplicationTests {
     }
 
     @Test
-    void updateUser() throws UserNotFoundException, UserAlreadyExistsException {
+    void updateUser() throws UserNotFoundException, UserAlreadyExistsException, InvalidPasswordException {
         UserInDto userInDto = UserInDto.builder()
                 .lastname("updatedLastname")
                 .name("updatedName")
