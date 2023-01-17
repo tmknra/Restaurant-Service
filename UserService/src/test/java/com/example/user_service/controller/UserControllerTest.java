@@ -82,6 +82,7 @@ public class UserControllerTest extends UserServiceApplicationTests {
         UserInDto updated = UserInDto.builder()
                 .name("updatedName")
                 .lastname("updatedLastname")
+                .email("updatedEmail@mail.mm")
                 .build();
         String json = objectMapper.writeValueAsString(updated);
         this.mockMvc.perform(put("/users/" + testUserId)
@@ -118,7 +119,7 @@ public class UserControllerTest extends UserServiceApplicationTests {
     @Test
     void changePasswordById() throws Exception {
         ChangePasswordInDto changePass = ChangePasswordInDto.builder()
-                .email("testMail@mail.qq")
+                .email("updatedEmail@mail.mm")
                 .oldPassword("1234Qwe#")
                 .newPassword("567Asd%")
                 .build();

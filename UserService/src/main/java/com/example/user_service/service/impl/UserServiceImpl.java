@@ -20,10 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,27 +52,20 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserOutDto updateUser(UserInDto user, long userId)
-            throws UserNotFoundException, UserAlreadyExistsException, InvalidPasswordException {
+            throws UserNotFoundException, UserAlreadyExistsException {
         UserEntity userById = findUserById(userId);
 
-        if (!user.getPassword().equals(userById.getPassword()))
-            throw new InvalidPasswordException("Wrong old password!");
-        userById.setPassword(user.getPassword());
-        if (user.getLastname() != null)
-            userById.setLastname(user.getLastname());
-        if (user.getName() != null)
-            userById.setName(user.getName());
-        if (user.getPatronymic() != null)
-            userById.setPatronymic(user.getPatronymic());
-        if (user.getEmail() != null) {
-            if (userRepository.existsByEmail(user.getEmail()))
-                throw new UserAlreadyExistsException(String.format("This 'email:{%s}' is already taken",user.getEmail()));
-            else{
-                userById.setEmail(user.getEmail());
-                log.info("User email changed '{}' -> '{}'", userById.getEmail(), user.getEmail());
-            }
+        userById.setLastname(Objects.requireNonNullElse(user.getLastname(), userById.getLastname()));
+        userById.setName(Objects.requireNonNullElse(user.getName(), userById.getName()));
+        userById.setPatronymic(Objects.requireNonNullElse(user.getPatronymic(), userById.getPatronymic()));
+
+        if (!user.getEmail().equals(userById.getEmail()) && userRepository.existsByEmail(user.getEmail()))
+            throw new UserAlreadyExistsException(String.format("This 'email:{%s}' is already taken", user.getEmail()));
+        else {
+            userById.setEmail(Objects.requireNonNullElse(user.getEmail(), userById.getEmail()));
+            log.info("User email changed '{}' -> '{}'", userById.getEmail(), user.getEmail());
         }
-        log.info("Updated user 'email:{}' info", user.getEmail());
+        log.info("Updated user info 'email:{}'", user.getEmail());
         return userMapper.userEntityToUserOutDto(userRepository.save(userById));
     }
 
