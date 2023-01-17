@@ -2,15 +2,15 @@ package com.example.restaurant_service.dto.out;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Builder
 @Data
 @Schema(description = "DTO to represent user from database")
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserOutDto {
 
     private Long id;

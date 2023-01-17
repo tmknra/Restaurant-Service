@@ -4,9 +4,11 @@ import com.example.user_service.dto.UpdateRestaurantOwnerDto;
 import com.example.user_service.dto.in.ChangePasswordInDto;
 import com.example.user_service.dto.in.UserInDto;
 import com.example.user_service.dto.out.UserOutDto;
-import com.example.user_service.exception.UserAlreadyExists;
+import com.example.user_service.exception.InvalidPasswordException;
+import com.example.user_service.exception.UserAlreadyExistsException;
 import com.example.user_service.exception.UserNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,11 +20,11 @@ public interface UserController {
 
     @Operation(summary = "Creates new user")
     @PostMapping
-    UserOutDto createUser(@RequestBody UserInDto user) throws UserAlreadyExists;
+    UserOutDto createUser(@RequestBody @Valid UserInDto user) throws UserAlreadyExistsException;
 
     @Operation(summary = "Updates user by id")
     @PutMapping("/{userId}")
-    UserOutDto updateUser(@RequestBody UserInDto user, @PathVariable Long userId) throws UserNotFoundException, UserAlreadyExists;
+    UserOutDto updateUser(@RequestBody @Valid UserInDto user, @PathVariable Long userId) throws UserNotFoundException, UserAlreadyExistsException, InvalidPasswordException;
 
     @Operation(summary = "Delete user by id.")
     @DeleteMapping("/{id}")
@@ -34,11 +36,11 @@ public interface UserController {
 
     @Operation(summary = "Return all users")
     @GetMapping("/all")
-    List<UserOutDto> getAllUsers();
+    List<UserOutDto> getAllUsers(Pageable pageable);
 
     @Operation(summary = "Changing user password")
     @PutMapping("/pass")
-    ResponseEntity<?> changePasswordById(@RequestBody @Valid ChangePasswordInDto body) throws UserNotFoundException;
+    ResponseEntity<?> changePasswordById(@RequestBody @Valid ChangePasswordInDto body) throws UserNotFoundException, InvalidPasswordException;
 
     @Operation(summary = "Updates restaurant owner")
     @PutMapping("/updateOwner")

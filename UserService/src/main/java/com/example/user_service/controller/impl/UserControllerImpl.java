@@ -5,23 +5,32 @@ import com.example.user_service.dto.UpdateRestaurantOwnerDto;
 import com.example.user_service.dto.in.ChangePasswordInDto;
 import com.example.user_service.dto.in.UserInDto;
 import com.example.user_service.dto.out.UserOutDto;
-import com.example.user_service.exception.UserAlreadyExists;
+import com.example.user_service.exception.InvalidPasswordException;
+import com.example.user_service.exception.UserAlreadyExistsException;
 import com.example.user_service.exception.UserNotFoundException;
 import com.example.user_service.service.UserService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
+@Slf4j
 public class UserControllerImpl implements UserController {
 
-    @Autowired
-    private UserService userService;
+
+    private final UserService userService;
+
+    public UserControllerImpl(UserService userService) {
+        log.info("Initialized UserController");
+        this.userService = userService;
+    }
 
     @Override
     @ApiResponses(value = {
@@ -31,7 +40,8 @@ public class UserControllerImpl implements UserController {
             @ApiResponse(
                     responseCode = "401",
                     description = "Provided email already taken.")})
-    public UserOutDto createUser(UserInDto user) throws UserAlreadyExists {
+    public UserOutDto createUser(UserInDto user) throws UserAlreadyExistsException {
+        log.info("Got POST request from client to create new user with 'email:{}'", user.getEmail());
         return userService.createUser(user);
     }
 
@@ -43,7 +53,9 @@ public class UserControllerImpl implements UserController {
             @ApiResponse(
                     responseCode = "401",
                     description = "Provided email already taken.")})
-    public UserOutDto updateUser(UserInDto user, Long userId) throws UserNotFoundException, UserAlreadyExists {
+    public UserOutDto updateUser(UserInDto user, Long userId)
+            throws UserNotFoundException, UserAlreadyExistsException, InvalidPasswordException {
+        log.info("Got PUT request from client to update user");
         return userService.updateUser(user, userId);
     }
 
@@ -57,6 +69,7 @@ public class UserControllerImpl implements UserController {
                     responseCode = "404",
                     description = "Provided user not found.")})
     public ResponseEntity<?> deleteUser(Long id) {
+        log.info("Got DELETE request from client to delete user");
         return userService.deleteUser(id);
     }
 
@@ -70,6 +83,7 @@ public class UserControllerImpl implements UserController {
                     responseCode = "404",
                     description = "Provided user not found.")})
     public UserOutDto getUserById(Long userId) {
+        log.info("Got GET request from client to get user");
         return userService.getUserById(userId);
     }
 
@@ -78,8 +92,9 @@ public class UserControllerImpl implements UserController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Returns users list.")})
-    public List<UserOutDto> getAllUsers() {
-        return userService.getAllUsers();
+    public List<UserOutDto> getAllUsers(Pageable pageable) {
+        log.info("Got GET request from client to get list of users");
+        return userService.getAllUsers(pageable);
     }
 
     @Override
@@ -90,7 +105,9 @@ public class UserControllerImpl implements UserController {
             @ApiResponse(
                     responseCode = "404",
                     description = "Provided user not found.")})
-    public ResponseEntity<?> changePasswordById(ChangePasswordInDto body) throws UserNotFoundException {
+    public ResponseEntity<?> changePasswordById(ChangePasswordInDto body)
+            throws UserNotFoundException, InvalidPasswordException {
+        log.info("Got PUT request from client to change user password");
         return userService.changePasswordById(body);
     }
 
@@ -103,6 +120,7 @@ public class UserControllerImpl implements UserController {
                     responseCode = "404",
                     description = "One of the provided users not found.")})
     public ResponseEntity<?> updateRestaurantOwner(UpdateRestaurantOwnerDto updateRestaurantOwnerDto) throws UserNotFoundException {
+        log.info("Got PUT request from client to update restaurants owner");
         return ResponseEntity.ok(userService.updateUserToRestaurant(updateRestaurantOwnerDto));
     }
 
